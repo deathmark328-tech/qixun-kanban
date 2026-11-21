@@ -91,10 +91,21 @@ def transcribe(wav_path: str) -> str:
            "-of", out_prefix, "-np", "-t", "8"]
     subprocess.run(cmd, capture_output=True, timeout=180)
     p = out_prefix + ".txt"
-    if os.path.exists(p):
-        txt = open(p, encoding="utf-8", errors="replace").read().strip()
-        return re.sub(r"\[[^\]]*\]", "", txt).strip()
-    return ""
+    if not os.path.exists(p):
+        return ""
+    txt = open(p, encoding="utf-8", errors="replace").read().strip()
+    txt = re.sub(r"\[[^\]]*\]", "", txt).strip()
+    # 专有名词纠正：whisper 对小孩发音常错
+    fixes = {
+        "小心": "小星", "小新": "小星", "小兴": "小星",
+        "启讯": "启洵", "启寻": "启洵", "启巡": "启洵", "其实": "启洵",
+        "马文": "Marvin", "哈蒙兹": "Mrs Hamonds", "汉蒙兹": "Mrs Hamonds",
+        "西门": "Westburn", "西本": "Westburn",
+        "看的那": "Kindercare",
+    }
+    for bad, good in fixes.items():
+        txt = txt.replace(bad, good)
+    return txt
 
 
 def ask_llm(text: str) -> str:
