@@ -1,0 +1,32 @@
+{
+ "name": "启洵的今天 · 小看板",
+ "short_name": "启洵的今天",
+ "description": "启洵的视觉流程看板：早上与晚上流程",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "landscape",
+ "background_color": "#fff9ef",
+ "theme_color": "#ffd9a0",
+ "lang": "zh-CN",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
