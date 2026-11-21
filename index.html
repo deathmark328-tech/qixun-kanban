@@ -53,8 +53,8 @@
                     font-weight:900; letter-spacing:.5px; opacity:.75}
   .seg button.on{background:var(--todo); color:var(--ink)}
 
-  .board{height:calc(100% - 74px); display:grid; grid-template-columns:1fr 1fr 1fr;
-         gap:12px; padding:6px 16px 14px}
+  .board{height:calc(100% - 74px - 96px); display:grid; grid-template-columns:1fr 1fr 1fr;
+         gap:12px; padding:6px 16px 10px}
   .col{border:4px solid var(--line); border-radius:24px; padding:8px; display:flex;
        flex-direction:column; min-height:0; box-shadow:var(--sh); transition:outline .1s}
   .col.todo{background:linear-gradient(#ffe7c2,#ffe0b0)}
@@ -127,6 +127,47 @@
   .ask .yes.danger{background:#ffb38a}
   .ask .row button:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(58,47,42,.2)}
 
+
+  /* ── 语音提问条 ── */
+  .askbar{
+    position:fixed; left:0; right:0; bottom:0; height:96px;
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    padding:0 16px calc(6px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top, rgba(255,249,239,.98) 60%, rgba(255,249,239,0));
+    z-index:60;
+  }
+  .talk{
+    width:78px; height:78px; border-radius:50%; border:4px solid var(--line);
+    background:linear-gradient(#ffe08a,#ffc94d); box-shadow:0 6px 0 rgba(58,47,42,.25);
+    font-size:32px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; flex:0 0 auto; transition:transform .08s;
+  }
+  .talk:active,.talk.rec{transform:scale(.94); background:linear-gradient(#ffb3a0,#ff8a6b)}
+  .talk.rec{animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 6px 0 rgba(58,47,42,.25),0 0 0 0 rgba(255,110,80,.5)}
+                   50%{box-shadow:0 6px 0 rgba(58,47,42,.25),0 0 0 16px rgba(255,110,80,0)}}
+  .talklbl{text-align:center; line-height:1.15; pointer-events:none}
+  .talklbl .z{font-size:15px; font-weight:700}
+  .talklbl .p{font-family:"DejaVu Sans",sans-serif; font-size:8px; font-weight:900;
+              color:#a08a76; letter-spacing:.4px}
+  .bubble{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:104px;
+    max-width:min(720px,92vw); background:#fff; border:4px solid var(--line);
+    border-radius:22px; padding:10px 16px; box-shadow:0 6px 0 rgba(58,47,42,.2);
+    font-size:17px; line-height:1.35; display:none; z-index:70;
+  }
+  .bubble.on{display:block; animation:pop .18s ease-out}
+  .bubble .who{font-size:12px; color:#a08a76; font-weight:700; margin-bottom:2px}
+  .bubble .py2{font-family:"DejaVu Sans",sans-serif; font-size:9px; font-weight:700;
+               color:#b9a58f; letter-spacing:.4px; margin-top:3px}
+  .xstar{font-size:38px; line-height:1; filter:drop-shadow(0 3px 0 rgba(0,0,0,.12)); flex:0 0 auto}
+  .musicbtn{
+    position:fixed; right:14px; bottom:calc(10px + env(safe-area-inset-bottom));
+    width:52px; height:52px; border-radius:50%; border:3px solid var(--line);
+    background:#fff; box-shadow:var(--sh); font-size:22px; z-index:80; cursor:pointer;
+  }
+  .musicbtn.on{background:#cdf3d6}
+
   .spark{position:fixed; pointer-events:none; font-size:24px; animation:sp .9s ease-out forwards; z-index:9998}
   @keyframes sp{0%{transform:translate(0,0) scale(.6);opacity:1}
                 100%{transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--rot));opacity:0}}
@@ -187,6 +228,24 @@
     <div class="zone" id="zDone"></div>
   </section>
 </div>
+
+
+<!-- 语音提问 -->
+<div class="bubble" id="bubble">
+  <div class="who" id="bWho">小星</div>
+  <div id="bText">按住按钮跟我说话</div>
+  <div class="py2" id="bPy"></div>
+</div>
+
+<div class="askbar">
+  <div class="xstar" id="xstar">🐥</div>
+  <div class="talk" id="talkBtn">🎤</div>
+  <div class="talklbl">
+    <div class="z">按住跟小星说话</div>
+    <div class="p">ÀN ZHÙ GĒN XIǍO XĪNG SHUŌ HUÀ</div>
+  </div>
+</div>
+<button class="musicbtn" id="musicBtn" title="背景音乐">🎵</button>
 
 <div class="mask" id="mask">
   <div class="ask">
@@ -483,6 +542,158 @@ document.getElementById("partyClose").onclick=function(){
 };
 
 if(loadSaved()) render(); else build();
+
+/* ══════════ 背景音乐（程序生成，无版权） ══════════ */
+let musicOn=false, musicCtx=null, musicTimer=null;
+function startMusic(){
+  try{
+    musicCtx = musicCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(musicCtx.state==="suspended") musicCtx.resume();
+    const scale=[523.25,587.33,659.25,783.99,880.0,1046.5];
+    let step=0;
+    const play=()=>{
+      const c=musicCtx, t=c.currentTime;
+      const f=scale[step%scale.length];
+      const o=c.createOscillator(), g=c.createGain();
+      o.type="triangle"; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.055,t+0.06);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.85);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+0.9);
+      // 低音铺底
+      if(step%4===0){
+        const b=c.createOscillator(), bg=c.createGain();
+        b.type="sine"; b.frequency.value=f/4;
+        bg.gain.setValueAtTime(0.0001,t);
+        bg.gain.exponentialRampToValueAtTime(0.03,t+0.15);
+        bg.gain.exponentialRampToValueAtTime(0.0001,t+1.6);
+        b.connect(bg); bg.connect(c.destination); b.start(t); b.stop(t+1.7);
+      }
+      step++;
+    };
+    play();
+    musicTimer=setInterval(play,700);
+    musicOn=true;
+    document.getElementById("musicBtn").classList.add("on");
+  }catch(e){}
+}
+function stopMusic(){
+  if(musicTimer){clearInterval(musicTimer); musicTimer=null;}
+  musicOn=false;
+  document.getElementById("musicBtn").classList.remove("on");
+}
+document.getElementById("musicBtn").onclick=function(){
+  if(musicOn) stopMusic(); else startMusic();
+};
+
+/* ══════════ 按住提问（录音 → 后端 → 语音回答） ══════════ */
+let rec=null, chunks=[], recording=false, startedAt=0;
+const bubble=document.getElementById("bubble");
+const bWho=document.getElementById("bWho");
+const bText=document.getElementById("bText");
+const bPy=document.getElementById("bPy");
+const talkBtn=document.getElementById("talkBtn");
+let hideTimer=null;
+
+function bubbleShow(who,text,py,ms){
+  bWho.textContent=who; bText.textContent=text; bPy.textContent=py||"";
+  bubble.classList.add("on");
+  clearTimeout(hideTimer);
+  if(ms) hideTimer=setTimeout(()=>bubble.classList.remove("on"),ms);
+}
+function bubbleHide(){ clearTimeout(hideTimer); bubble.classList.remove("on"); }
+
+function pickMime(){
+  const list=["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/aac"];
+  for(const m of list){ if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; }
+  return "";
+}
+
+async function startRec(){
+  if(recording) return;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+    const mime=pickMime();
+    rec=new MediaRecorder(stream, mime?{mimeType:mime}:undefined);
+    chunks=[];
+    rec.ondataavailable=e=>{ if(e.data && e.data.size>0) chunks.push(e.data); };
+    rec.start();
+    recording=true; startedAt=Date.now();
+    talkBtn.classList.add("rec");
+    if(musicOn) stopMusic();
+    beep(720,.08,"sine",.05);
+    bubbleShow("小星","我在听……说完松手","mó —— wǒ zài tīng");
+  }catch(e){
+    bubbleShow("小星","麦克风没打开，要大人允许一下","please allow microphone",4000);
+  }
+}
+
+async function stopRec(){
+  if(!recording||!rec) return;
+  recording=false;
+  talkBtn.classList.remove("rec");
+  const dur=Date.now()-startedAt;
+  const stopped=new Promise(res=>{ rec.onstop=res; });
+  try{ rec.stop(); }catch(e){}
+  rec.stream.getTracks().forEach(t=>t.stop());
+  await stopped;
+
+  if(dur<450){ bubbleShow("小星","按住久一点点再说","hold a bit longer",2600); return; }
+
+  const blob=new Blob(chunks,{type:chunks[0]?chunks[0].type:"audio/mp4"});
+  bubbleShow("小星","让我想一想……","ràng wǒ xiǎng yī xiǎng");
+  beep(880,.1,"sine",.04);
+
+  try{
+    const r=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":blob.type||"application/octet-stream"},body:blob});
+    if(!r.ok) throw new Error("http "+r.status);
+    const d=await r.json();
+    if(d.heard){ bWho.textContent="我听到"; bText.textContent=d.heard; bPy.textContent=""; }
+    setTimeout(()=>{
+      bubbleShow("小星", d.reply || "我没听清呢", "", 9000);
+      if(d.audio){ const a=new Audio(d.audio); a.play().catch(()=>{}); }
+      else { speakLocal(d.reply); }
+    }, 350);
+  }catch(e){
+    bubbleShow("小星","我现在连不上，等一下再试","offline",5000);
+  }
+}
+
+/* 浏览器兜底朗读（后端无音频时） */
+function speakLocal(text){
+  if(!text||!window.speechSynthesis) return;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="zh-CN"; u.rate=0.9; u.pitch=1.15;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+talkBtn.addEventListener("pointerdown",e=>{ e.preventDefault(); startRec(); });
+talkBtn.addEventListener("pointerup",e=>{ e.preventDefault(); stopRec(); });
+talkBtn.addEventListener("pointercancel",()=>{ if(recording) stopRec(); });
+talkBtn.addEventListener("contextmenu",e=>e.preventDefault());
+
+/* 点气泡关掉 */
+bubble.addEventListener("click",bubbleHide);
+
+/* ══════════ 开机问候：让他一打开就认得小星 ══════════ */
+let greeted=false;
+async function greet(){
+  if(greeted) return;
+  greeted=true;
+  let g={greet:"你好",py:"nǐ hǎo",hook:"我们先看看今天要做哪几件？",name:"启洵"};
+  try{
+    const r=await fetch("/api/hello",{cache:"no-store"});
+    if(r.ok) g=await r.json();
+  }catch(e){}
+  bubbleShow("小星 · " + g.greet,
+             g.name + "，" + g.greet + "呀！我是小星。" + g.hook,
+             g.py, 9000);
+  // 首次触碰时补一句语音（iOS 需手势）
+  const once=()=>{ speakLocal(g.name+"，"+g.greet+"呀！我是小星。"+g.hook);
+                   window.removeEventListener("pointerdown",once); };
+  window.addEventListener("pointerdown",once,{once:true});
+}
+setTimeout(greet, 600);
 </script>
 <script>
 if ('serviceWorker' in navigator) {
