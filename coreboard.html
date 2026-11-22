@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4eee5">
+<title>启洵的 Coreboard · 核心词沟通板</title>
+<link rel="manifest" href="./manifest.json">
+<style>
+:root{--ink:#263446;--muted:#607080;--paper:#fffdf8;--bg:#f5f1e8;--outline:#d4d6d6;--accent:#245e76}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+button,a{font:inherit;touch-action:manipulation}
+button:focus-visible,a:focus-visible{outline:4px solid #256fc7;outline-offset:3px}
+header{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px max(14px,env(safe-area-inset-right));background:#fffaf1;border-bottom:2px solid #e3ddd1}
+h1{margin:0;font-size:clamp(19px,2.4vw,29px);line-height:1.2}
+header p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.top-actions{margin-left:auto;display:flex;gap:9px;align-items:center}
+.link,.switch{border:2px solid #c8d3da;border-radius:13px;padding:9px 12px;background:white;color:#214b67;text-decoration:none;font-weight:700}
+.switch{cursor:pointer}
+main{max-width:1440px;margin:auto;padding:13px clamp(10px,1.7vw,24px) 24px}
+.sentence{background:white;border:3px solid #cddfe4;border-radius:22px;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;box-shadow:0 4px 0 rgba(38,52,70,.06)}
+.sentence-label{font-size:14px;font-weight:800;color:#557184;margin-bottom:5px}
+.words-chosen{display:flex;flex-wrap:wrap;gap:7px;min-height:49px;align-items:center}
+.chosen{border-radius:10px;padding:7px 11px;background:#e9f5fa;color:#193c4e;font-size:21px;font-weight:800}
+.hint{color:#7f8c93;font-size:17px}
+.sentence-actions{display:flex;gap:7px}
+.action{border:2px solid #c6d7de;background:#f5fbfd;border-radius:14px;padding:12px 14px;min-height:55px;cursor:pointer;font-weight:800;white-space:nowrap}
+.action.speak{background:#256879;border-color:#256879;color:white;font-size:20px}
+.action:disabled{opacity:.48}
+.section-head{display:flex;align-items:baseline;gap:12px;margin:17px 2px 10px}
+h2{font-size:clamp(18px,2.1vw,24px);margin:0}
+.section-head span{color:var(--muted);font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.tile{display:flex;min-width:0;min-height:91px;gap:4px;flex-direction:column;align-items:center;justify-content:center;border:3px solid #b7cad2;border-bottom-width:6px;border-radius:17px;background:#e8f4f8;color:#1d4052;cursor:pointer;padding:7px 3px;position:relative}
+.tile .emoji{font-size:clamp(24px,3.4vw,37px);line-height:1}
+.tile .zh{font-size:clamp(20px,2.6vw,29px);font-weight:900;line-height:1.2}
+.tile .en{font-size:clamp(10px,1.22vw,15px);font-weight:750;line-height:1.1;text-transform:uppercase;color:#51687a}
+.tile:active,.tile.pressed{transform:translateY(3px);border-bottom-width:3px;filter:saturate(1.35)}
+.tile.request{background:#fff0d0;border-color:#e4c481;color:#5d431d}
+.tile.social{background:#e7f5dc;border-color:#b0d397;color:#315321}
+.tile.control{background:#fce9e6;border-color:#dfaea5;color:#703c34}
+.tile.extra{background:#fcf8ec;border-color:#d9cba5}
+.groups{display:flex;flex-wrap:wrap;gap:8px}
+.group{border:2px solid #c8c8d0;border-radius:999px;background:white;padding:9px 16px;font-size:17px;font-weight:800;cursor:pointer;min-height:45px}
+.group[aria-selected="true"]{background:#263f53;color:white;border-color:#263f53}
+#extraTiles .tile{min-height:81px}
+footer{padding:8px 5px;color:#607080;font-size:13px;text-align:center}
+#status{position:absolute;left:-9999px}
+@media(max-width:780px){header{gap:7px}.top-actions{margin-left:0}.link,.switch{font-size:14px;padding:7px}.sentence{grid-template-columns:1fr}.sentence-actions{justify-content:flex-end}.tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.tile{min-height:79px;border-radius:13px;padding:6px 2px}.tile .zh{font-size:21px}.tile .en{font-size:10px}.tile .emoji{font-size:25px}.group{font-size:15px;padding:7px 12px}main{padding:8px}.section-head{margin-top:13px}}
+@media(max-width:440px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.action{padding:9px 11px}.action.speak{font-size:17px}.hint{font-size:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+<div><h1>💬 启洵的 Coreboard</h1><p>核心词沟通板 · 指一指，说出来 · POINT & TALK</p></div>
+<div class="top-actions">
+<a class="link" href="./index.html">🗓️ 流程看板</a>
+<button class="switch" id="lang" aria-label="切换朗读语言">🔊 中文</button>
+</div>
+</header>
+<main>
+<section class="sentence" aria-label="正在组合的话">
+<div>
+<div class="sentence-label">我想说 · MY MESSAGE</div>
+<div class="words-chosen" id="chosen"><span class="hint">点下面的图卡，就能说出你想说的话</span></div>
+</div>
+<div class="sentence-actions">
+<button class="action" id="undo" aria-label="撤销上一个词">↶ 撤销</button>
+<button class="action" id="clear" aria-label="清空句子">✕ 清空</button>
+<button class="action speak" id="say" aria-label="朗读整句话">▶ 说整句</button>
+</div>
+</section>
+<section aria-label="常用核心词">
+<div class="section-head"><h2>⭐ 常用词 · CORE WORDS</h2><span>位置固定，慢慢熟悉</span></div>
+<div class="tiles" id="coreTiles"></div>
+</section>
+<section aria-label="更多生活词">
+<div class="section-head"><h2>🧩 更多想说的 · MORE WORDS</h2></div>
+<div class="groups" id="groups" role="tablist" aria-label="词语类别"></div>
+<div class="tiles" id="extraTiles" style="margin-top:10px"></div>
+</section>
+<footer>一次点一个词就好。不会说完整句子也没关系。· ONE WORD AT A TIME IS OK.</footer>
+<div id="status" role="status" aria-live="polite"></div>
+</main>
+<script>
+"use strict";
+const CORE=[
+["我","I","🙋","social"],["你","YOU","👉","social"],["想","WANT","💭","request"],["要","NEED","👐","request"],["不要","DON'T WANT","✋","control"],
+["好","YES","👍","social"],["不","NO","🙅","control"],["更多","MORE","➕","request"],["帮忙","HELP","🫶","request"],["停","STOP","🛑","control"],
+["去","GO","🚶","social"],["来","COME","👋","social"],["看","LOOK","👀","social"],["听","LISTEN","👂","social"],["这个","THIS","👇","request"],
+["那个","THAT","👈","request"],["一起","TOGETHER","🤝","social"],["再来","AGAIN","🔁","request"],["等一下","WAIT","⏳","control"],["完成","FINISHED","✅","social"]
+];
+const EXTRA={
+"需要":[["水","WATER","💧"],["吃饭","FOOD","🍚"],["厕所","TOILET","🚽"],["休息","BREAK","🛋️"],["抱抱","HUG","🫂"],["玩具","TOY","🧸"],["故事","STORY","📖"],["喝","DRINK","🥤"],["睡觉","SLEEP","🛏️"],["回家","HOME","🏠"]],
+"感觉":[["开心","HAPPY","😊"],["难过","SAD","😢"],["生气","ANGRY","😠"],["害怕","SCARED","😨"],["累","TIRED","😴"],["疼","HURT","🤕"],["饿","HUNGRY","😋"],["热","HOT","🥵"],["冷","COLD","🥶"],["不舒服","UNWELL","😣"]],
+"活动":[["玩","PLAY","🧩"],["走","WALK","🚶"],["跑","RUN","🏃"],["画画","DRAW","🎨"],["唱歌","SING","🎵"],["刷牙","BRUSH TEETH","🪥"],["穿衣服","DRESS","👕"],["收玩具","TIDY","🧸"],["读书","READ","📚"],["洗手","WASH HANDS","🫧"]],
+"人物地点":[["爸爸","DAD","👨"],["妈妈","MUM","👩"],["老师","TEACHER","👩‍🏫"],["朋友","FRIEND","🧒"],["学校","SCHOOL","🏫"],["家","HOME","🏡"],["外面","OUTSIDE","🌳"],["里面","INSIDE","🏠"]]
+};
+let language="zh",selected=[],group="需要";
+const chosenEl=document.getElementById("chosen"),statusEl=document.getElementById("status");
+function say(text){
+  if(!text)return;
+  statusEl.textContent=text;
+  if(!("speechSynthesis" in window))return;
+  try{
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(text);
+    utterance.lang=language==="zh"?"zh-CN":"en-NZ";
+    utterance.rate=.83;utterance.pitch=1;
+    window.speechSynthesis.speak(utterance);
+  }catch(error){statusEl.textContent="设备暂时不能朗读，请大人检查声音";}
+}
+function spoken(word){return word[language==="zh"?0:1]}
+function updateSentence(){
+  chosenEl.replaceChildren();
+  if(!selected.length){
+    const hint=document.createElement("span");hint.className="hint";
+    hint.textContent="点下面的图卡，就能说出你想说的话";chosenEl.appendChild(hint);
+  }else selected.forEach(function(word){
+    const chip=document.createElement("span");chip.className="chosen";
+    chip.textContent=spoken(word);chosenEl.appendChild(chip);
+  });
+  document.getElementById("undo").disabled=selected.length===0;
+  document.getElementById("clear").disabled=selected.length===0;
+  document.getElementById("say").disabled=selected.length===0;
+}
+function addWord(word,button){
+  selected.push(word);if(selected.length>16)selected.shift();
+  updateSentence();say(spoken(word));
+  button.classList.add("pressed");
+  setTimeout(function(){button.classList.remove("pressed");},160);
+}
+function makeTile(word,kind){
+  const button=document.createElement("button");button.type="button";
+  button.className="tile "+(kind||"extra");
+  button.setAttribute("aria-label",word[0]+"，"+word[1]);
+  const icon=document.createElement("span");icon.className="emoji";icon.textContent=word[2];
+  const zh=document.createElement("span");zh.className="zh";zh.textContent=word[0];
+  const en=document.createElement("span");en.className="en";en.textContent=word[1];
+  button.append(icon,zh,en);
+  button.addEventListener("click",function(){addWord(word,button)});
+  return button;
+}
+function renderExtra(){
+  const root=document.getElementById("extraTiles");root.replaceChildren();
+  EXTRA[group].forEach(function(word){root.appendChild(makeTile(word,"extra"));});
+}
+function renderGroups(){
+  const root=document.getElementById("groups");root.replaceChildren();
+  Object.keys(EXTRA).forEach(function(name){
+    const b=document.createElement("button");b.type="button";b.className="group";
+    b.textContent=({"需要":"🥛 需要","感觉":"❤️ 感觉","活动":"⚽ 活动","人物地点":"🏡 人物/地点"})[name];
+    b.role="tab";b.setAttribute("aria-selected",String(group===name));
+    b.addEventListener("click",function(){group=name;renderGroups();renderExtra();});
+    root.appendChild(b);
+  });
+}
+CORE.forEach(function(word){document.getElementById("coreTiles").appendChild(makeTile(word,word[3]));});
+renderGroups();renderExtra();updateSentence();
+document.getElementById("lang").addEventListener("click",function(){
+  language=language==="zh"?"en":"zh";
+  this.textContent=language==="zh"?"🔊 中文":"🔊 English";
+  updateSentence();say(language==="zh"?"中文":"English");
+});
+document.getElementById("undo").addEventListener("click",function(){selected.pop();updateSentence();});
+document.getElementById("clear").addEventListener("click",function(){selected=[];updateSentence();window.speechSynthesis&&window.speechSynthesis.cancel();});
+document.getElementById("say").addEventListener("click",function(){say(selected.map(spoken).join(language==="zh"?"":" "));});
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("./sw.js").catch(function(){});
+}
+</script>
+</body>
+</html>
