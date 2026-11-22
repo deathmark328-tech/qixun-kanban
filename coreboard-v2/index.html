@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#264a52">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="启洵 Coreboard">
+  <meta name="description" content="启洵的纸质词板对位沟通工具与 Trello 式视觉日程。">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../icon-192.png">
+  <title>启洵的 Coreboard · 视觉沟通与流程看板</title>
+  <style>
+    :root { --ink:#213c44; --muted:#66818a; --teal:#236d71; --teal-light:#d7eeea; --paper:#f7f5ef; --white:#fff; --line:#d8e2de; --sun:#f8d97d; --salmon:#f0b39d; --blue:#d2eaf7; --green:#d8edce; --pink:#f6d8e8; --purple:#e3ddfb; --shadow:0 9px 24px rgba(31,70,70,.09); }
+    * { box-sizing:border-box; }
+    html { -webkit-text-size-adjust:100%; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:ui-rounded,"SF Pro Rounded","PingFang SC","Microsoft YaHei",system-ui,sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid #faaf5f; outline-offset:2px; }
+    .app-shell { max-width:1520px; margin:0 auto; padding:0 clamp(14px,3vw,38px) 45px; }
+    .masthead { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:24px 0 16px; }
+    .brand { display:flex; align-items:center; gap:13px; }
+    .brand-mark { display:grid; place-items:center; width:55px; height:55px; border-radius:19px; font-size:29px; background:var(--sun); box-shadow:0 5px 0 #e9bb54; }
+    .brand small { color:var(--muted); letter-spacing:.12em; font-size:10px; font-weight:900; }
+    .brand h1 { font-size:clamp(22px,2.8vw,34px); letter-spacing:-.04em; line-height:1.12; margin:4px 0 0; }
+    .top-actions { display:flex; gap:8px; align-items:center; }
+    .subtle-btn, .pill, .nav-tab, .icon-btn { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:15px; padding:11px 15px; font-weight:800; min-height:44px; }
+    .subtle-btn:hover,.nav-tab:hover,.pill:hover { border-color:#8cb9b3; }
+    .parent-btn { background:var(--ink); color:#fff; border-color:var(--ink); }
+    .nav { display:flex; gap:9px; overflow-x:auto; padding:5px 0 16px; scrollbar-width:thin; }
+    .nav-tab { flex:0 0 auto; display:flex; align-items:center; gap:8px; white-space:nowrap; box-shadow:0 3px 0 #d9e4dd; font-size:14px; }
+    .nav-tab[aria-current="page"] { background:var(--teal); border-color:var(--teal); color:white; box-shadow:0 3px 0 #18575a; }
+    .intro { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 26px; border-radius:24px; background:#264a52; color:#fff; margin-bottom:19px; min-height:122px; position:relative; overflow:hidden; }
+    .intro::after { content:"✳"; font-size:170px; line-height:1; position:absolute; right:6%; top:-53px; color:rgba(255,255,255,.065); pointer-events:none; }
+    .eyebrow { color:#9fe2d6; text-transform:uppercase; letter-spacing:.14em; font-size:11px; font-weight:900; margin:0 0 8px; }
+    .intro h2 { margin:0 0 6px; font-size:clamp(23px,3.2vw,35px); letter-spacing:-.045em; }
+    .intro p { margin:0; color:#d3e4e2; font-size:14px; line-height:1.6; }
+    .hero-emoji { font-size:68px; z-index:1; }
+    .grid-tools { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:0 0 16px; }
+    .scene-switch { display:flex; flex-wrap:wrap; gap:7px; }
+    .pill { padding:10px 15px; border-radius:100px; box-shadow:none; font-size:13px; }
+    .pill.active { background:#fbe7bd; border-color:#e6c66d; }
+    .hint { color:var(--muted); font-size:12px; line-height:1.5; }
+    .section-label { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:19px 0 12px; }
+    .section-label h3 { margin:0; font-size:18px; }
+    .section-label small { color:var(--muted); }
+    .focus-strip { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .focus-tile { display:flex; align-items:center; gap:14px; background:#fff; padding:17px; border-radius:21px; box-shadow:var(--shadow); border:2px solid #d3ebe5; min-height:112px; }
+    .focus-tile.then { border-color:#f0e2bb; }
+    .focus-symbol { width:68px; height:68px; flex:0 0 68px; border-radius:20px; display:grid; place-items:center; font-size:39px; background:var(--teal-light); }
+    .then .focus-symbol { background:#fff0c8; }
+    .focus-label { color:var(--teal); font-size:12px; font-weight:900; letter-spacing:.1em; }
+    .then .focus-label { color:#a87724; }
+    .focus-title { font-weight:900; font-size:clamp(19px,2.7vw,28px); margin:5px 0 2px; }
+    .focus-en { color:var(--muted); font-size:13px; }
+    .board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; align-items:stretch; }
+    .lane { min-height:365px; background:#e6ece9; border-radius:22px; padding:13px; border:2px dashed transparent; transition:background .2s,border-color .2s; }
+    .lane[data-status="now"] { background:#dcece9; }
+    .lane[data-status="next"] { background:#f4ebd7; }
+    .lane[data-status="done"] { background:#e7e8e5; }
+    .lane.drag-over { border-color:#237576; background:#cfebe3; }
+    .lane-head { display:flex; gap:9px; align-items:center; justify-content:space-between; padding:6px 5px 14px; font-weight:950; }
+    .lane-dot { width:12px; height:12px; border-radius:50%; display:inline-block; background:#51b3a2; margin-right:4px; }
+    .lane[data-status="next"] .lane-dot { background:#e7b64a; }
+    .lane[data-status="done"] .lane-dot { background:#9aa39b; }
+    .count { background:rgba(255,255,255,.75); padding:3px 9px; border-radius:12px; font-size:12px; }
+    .task-card { position:relative; background:#fff; border:2px solid transparent; border-radius:18px; padding:15px; margin-bottom:11px; box-shadow:0 4px 0 rgba(34,72,71,.07); touch-action:pan-y; }
+    .task-card:hover { border-color:#acd3ca; }
+    .task-main { display:flex; gap:13px; align-items:center; cursor:pointer; min-height:74px; }
+    .task-symbol { font-size:39px; flex:0 0 55px; width:55px; height:55px; border-radius:15px; background:#f6f3ea; display:grid; place-items:center; }
+    .task-title { font-size:19px; font-weight:950; line-height:1.2; }
+    .task-en { color:var(--muted); font-size:12px; margin-top:4px; }
+    .task-actions { display:flex; gap:5px; flex-wrap:wrap; padding-top:10px; border-top:1px solid #edf0ec; margin-top:10px; }
+    .mini-btn { min-height:44px; border:0; border-radius:11px; background:#eef4f2; color:#33585c; font-weight:850; padding:7px 11px; font-size:12px; }
+    .mini-btn.primary { background:#24767a; color:#fff; }
+    .drag-handle { margin-left:auto; touch-action:none; cursor:grab; background:#f5f1e8; }
+    .task-card.dragging { opacity:.66; position:relative; z-index:20; box-shadow:0 14px 35px #3456; pointer-events:none; }
+    .empty { display:grid; place-items:center; text-align:center; padding:32px 16px; border:2px dashed #c3cfc9; border-radius:16px; color:#7d918e; min-height:110px; line-height:1.6; font-size:13px; }
+    .core-intro { background:#fff; border:1px solid var(--line); padding:14px 17px; border-radius:16px; margin-bottom:12px; line-height:1.55; font-size:13px; }
+    .core-scroll { overflow-x:auto; border-radius:17px; border:2px solid #adc4c1; background:#fff; -webkit-overflow-scrolling:touch; box-shadow:var(--shadow); }
+    .core-grid { display:grid; grid-template-columns:repeat(11,minmax(0,1fr)); min-width:920px; gap:2px; padding:4px; background:#a0b9b5; }
+    .core-cell { color:#21383c; background:#fff; border:0; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-width:0; min-height:100px; padding:6px 2px; border-radius:3px; overflow:hidden; }
+    .core-cell:active { transform:scale(.97); }
+    .core-cell.yellow { background:#fff3b8; } .core-cell.green { background:#d7f3c8; } .core-cell.pink { background:#f4b9de; } .core-cell.blue { background:#c9e6fa; } .core-cell.purple { background:#d7c6f6; } .core-cell.peach { background:#ffe0bd; } .core-cell.aqua { background:#d4f3f1; }
+    .core-cell.target { box-shadow:inset 0 0 0 4px #e26f3d, inset 0 0 0 7px #fff7ec; }
+    .core-cell.target::after { content:""; position:absolute; inset:8px; border:2px dashed #cc5f36; border-radius:40%; pointer-events:none; opacity:.9; }
+    .core-cell.circle-edit { box-shadow:inset 0 0 0 2px #35737b; }
+    .core-icon { font-size:28px; line-height:1.2; }
+    .core-en { font-size:clamp(11px,1vw,13px); text-align:center; font-weight:950; line-height:1.14; }
+    .core-zh { font-size:11px; font-weight:750; line-height:1.1; text-align:center; }
+    .core-py { font-size:9px; color:#4a6868; text-align:center; line-height:1.1; }
+    .numbers { display:flex; align-items:center; justify-content:center; gap:6px; padding:11px; background:#fff; min-width:920px; }
+    .number-btn { border:2px solid #d6dfdf; background:#fff; border-radius:12px; min-width:72px; min-height:57px; font-size:20px; font-weight:900; }
+    .number-btn.yes { color:#217e59; background:#e8f8e7; } .number-btn.no { color:#b04342; background:#fff0ed; }
+    .composer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; background:#264a52; border-radius:18px; padding:14px; color:#fff; margin:0 0 13px; }
+    .words { display:flex; gap:6px; flex-wrap:wrap; align-items:center; min-height:44px; }
+    .word-chip { background:#e9f7ed; color:#234a47; border-radius:12px; padding:8px 10px; font-weight:900; border:0; }
+    .composer-actions { display:flex; gap:7px; }
+    .composer .mini-btn { min-height:44px; }
+    .quick-phrases { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:10px 0; }
+    .quick-phrases button { border:1px solid #d5e0d9; background:#fff; border-radius:12px; padding:9px 12px; min-height:42px; color:var(--ink); font-weight:800; }
+    .firstthen { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+    .big-step { min-height:270px; background:#fff; border:3px solid #b5ddd5; border-radius:26px; padding:24px 14px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .big-step:last-child { border-color:#f1d9a3; }
+    .big-step .big-emoji { font-size:80px; }
+    .big-step strong { font-size:28px; margin:8px 0 3px; }
+    .big-step small { color:#718784; }
+    .timer-card { display:flex; align-items:center; flex-wrap:wrap; gap:22px; padding:21px; background:#fff; border-radius:24px; margin-top:17px; }
+    .timer-ring { width:144px; height:144px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(#26847d var(--progress,100%),#e4ebe7 0); flex-shrink:0; }
+    .timer-inner { width:120px; height:120px; border-radius:50%; background:white; display:grid; place-items:center; text-align:center; }
+    .timer-inner strong { font-size:31px; font-variant-numeric:tabular-nums; }
+    .timer-control { display:flex; gap:7px; flex-wrap:wrap; margin-top:10px; }
+    .timer-control button { border:0; border-radius:12px; padding:10px 15px; min-height:44px; background:#e8f1ed; color:#294f53; font-weight:900; }
+    .timer-control button.primary { background:#24767a; color:white; }
+    .choice-row { display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:1000px; }
+    .choice-card { min-height:350px; border:4px solid #e3ebe5; background:#fff; border-radius:30px; padding:30px 12px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; }
+    .choice-card.chosen { border-color:#21857c; background:#eaf8f3; }
+    .choice-card .choice-emoji { font-size:100px; }
+    .choice-card strong { font-size:32px; } .choice-card small { color:#688381; font-size:15px; }
+    .photo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:15px; }
+    .photo-card { background:#fff; border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:var(--shadow); }
+    .photo-img { width:100%; height:176px; object-fit:cover; display:block; background:#e6f1ed; }
+    .photo-placeholder { display:grid; place-items:center; height:176px; font-size:65px; background:#e6f1ed; }
+    .photo-meta { padding:14px; }
+    .photo-title { font-size:18px; font-weight:900; }
+    .photo-label { display:inline-flex; padding:6px 10px; border-radius:10px; font-size:12px; font-weight:900; margin:10px 0 0; background:#e5f4dc; color:#326c48; }
+    .photo-label.nope { background:#fbe4dc; color:#a54e3a; }
+    .photo-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+    .story-list { display:flex; gap:15px; overflow-x:auto; padding:8px 0 18px; }
+    .story-list .photo-card { flex:0 0 min(275px,76vw); }
+    .settings { position:fixed; inset:0; z-index:80; display:none; background:rgba(24,44,48,.45); padding:12px; }
+    .settings.open { display:flex; align-items:center; justify-content:center; }
+    .settings-panel { background:#fff; border-radius:26px; width:min(690px,100%); max-height:92dvh; overflow-y:auto; padding:26px; box-shadow:0 20px 65px #173a444d; }
+    .settings-head { display:flex; justify-content:space-between; gap:15px; align-items:center; }
+    .settings h2 { margin:0; } .settings h3 { margin:23px 0 8px; font-size:17px; }
+    .settings p { color:#62817f; font-size:13px; line-height:1.6; margin:7px 0; }
+    .settings .field-row { display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid #e9eeeb; padding:13px 0; }
+    .settings .field-row label { font-weight:800; line-height:1.5; }
+    .settings input[type="checkbox"] { width:23px; height:23px; accent-color:#21787b; }
+    .settings select { border:1px solid var(--line); padding:12px; border-radius:12px; min-width:100px; }
+    .settings .button-row { display:flex; flex-wrap:wrap; gap:8px; margin:11px 0; }
+    .danger { color:#ab4b3d; }
+    .footer { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; padding-top:23px; color:#8b9d98; font-size:12px; }
+    .toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1e4a4d; color:#fff; padding:12px 19px; border-radius:14px; box-shadow:var(--shadow); z-index:100; max-width:90%; text-align:center; opacity:0; pointer-events:none; transition:opacity .22s; }
+    .toast.show { opacity:1; }
+    @media (min-width:1100px) { .core-grid { min-width:0; } .numbers { min-width:0; } }
+    @media (max-width:760px) {
+      .masthead { padding:16px 0 13px; }
+      .brand-mark { width:46px; height:46px; border-radius:15px; }
+      .brand h1 { font-size:22px; }
+      .top-actions .subtle-btn { padding:9px; font-size:12px; }
+      .intro { min-height:110px; padding:18px; }
+      .hero-emoji { font-size:46px; }
+      .board { grid-template-columns:1fr; }
+      .lane { min-height:125px; }
+      .focus-strip { gap:8px; }
+      .focus-tile { padding:10px; gap:8px; min-height:98px; }
+      .focus-symbol { width:52px; height:52px; flex-basis:52px; font-size:31px; border-radius:14px; }
+      .focus-title { font-size:17px; }
+      .focus-en { font-size:11px; }
+      .firstthen { gap:8px; }
+      .big-step { min-height:215px; padding:12px 6px; }
+      .big-step .big-emoji { font-size:60px; }
+      .big-step strong { font-size:21px; }
+      .choice-row { gap:10px; }
+      .choice-card { min-height:275px; padding:15px 6px; }
+      .choice-card .choice-emoji { font-size:70px; }
+      .choice-card strong { font-size:24px; }
+      .settings-panel { padding:19px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">🧩</div><div><small>MARVIN · QIXUN</small><h1>启洵的 Coreboard</h1></div></div>
+      <div class="top-actions"><button class="subtle-btn" id="speak-mode" aria-label="切换朗读语言">🔊 英文</button><button class="subtle-btn parent-btn" id="settings-open">⚙️ 大人设置</button></div>
+    </header>
+    <nav class="nav" id="nav" aria-label="功能切换"></nav>
+    <main id="main" aria-live="off"></main>
+    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。</span><span>本机离线保存 · 家庭自用 · v2.0</span></footer>
+  </div>
+  <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="大人设置">
+    <div class="settings-panel">
+      <div class="settings-head"><div><small class="eyebrow" style="color:#237b78">PARENT SPACE</small><h2>大人设置</h2></div><button class="subtle-btn" id="settings-close">✕ 关闭</button></div>
+      <p>沟通板词序固定，对应学校给的 7 × 11 纸质词板；流程卡、照片和场景可以按家里实际情况改。</p>
+      <h3>👀 显示与朗读</h3>
+      <div class="field-row"><label for="pinyin-toggle">显示拼音<br><small class="hint">可根据启洵的阅读习惯关闭</small></label><input id="pinyin-toggle" type="checkbox"></div>
+      <div class="field-row"><label for="chinese-toggle">显示中文标签</label><input id="chinese-toggle" type="checkbox"></div>
+      <div class="field-row"><label for="speech-select">点击卡片朗读</label><select id="speech-select"><option value="en">英文</option><option value="zh">中文</option><option value="off">静音</option></select></div>
+      <h3>⭕ 本周示范词</h3>
+      <p>打开“圈词编辑”，再到固定沟通板点击想圈出的词。通常挑几张就好，圈词只是帮助大人更容易找到词。</p>
+      <div class="field-row"><label for="circle-toggle">圈词编辑模式</label><input id="circle-toggle" type="checkbox"></div>
+      <div class="button-row"><button class="subtle-btn" id="reset-targets">恢复建议 5 词</button><button class="subtle-btn" id="go-core">去沟通板圈词</button></div>
+      <h3>🗂️ 视觉流程卡</h3>
+      <p>选择场景后可以增删卡片、编辑图案和文字，也可以拖动卡片跨列。进入“今天的流程”操作。</p>
+      <div class="button-row"><button class="subtle-btn" id="add-scene">＋ 新建场景</button><button class="subtle-btn" id="rename-scene">✎ 改场景名</button><button class="subtle-btn" id="add-task">＋ 添加流程卡</button><button class="subtle-btn" id="reset-scene">↺ 恢复当前预设</button></div>
+      <h3>📷 照片与选择卡</h3>
+      <div class="button-row"><button class="subtle-btn" id="add-access">＋ 可用/不可用照片</button><button class="subtle-btn" id="add-story">＋ 照片故事</button><button class="subtle-btn" id="edit-choices">✎ 编辑二选一</button></div>
+      <h3>💾 备份与安装</h3>
+      <div class="button-row"><button class="subtle-btn" id="export-data">⬇ 导出所有设置</button><button class="subtle-btn" id="import-data">⬆ 导入备份</button></div>
+      <p>照片和卡片只保存在当前设备浏览器；删除网站数据或更换 iPad 可能丢失，请定期导出备份。安装：在 iPad Safari 打开本页 → 分享 → 添加到主屏幕。</p>
+      <div class="button-row"><button class="subtle-btn danger" id="reset-all">清除本版自定义内容</button></div>
+    </div>
+  </div>
+  <input id="photo-file" type="file" accept="image/*" hidden>
+  <input id="backup-file" type="file" accept="application/json,.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+  (function () {
+    'use strict';
+    const KEY = 'qixun-coreboard-personal-v2';
+    const NAV = [
+      ['routine','🗂️','今天的流程'], ['core','💬','固定沟通板'], ['first','1️⃣','先 / 然后'],
+      ['choices','🎯','做选择'], ['access','📷','可用 / 不可用'], ['story','📖','照片故事']
+    ];
+    // 每一格与 MOE 纸质样板的位置一致。标签保持英文原文，中文是可调整的家庭辅助层。
+    const RAW = [
+      [
+        ['I / me / my','我 / 我的','wǒ / wǒ de','🙋','yellow'],['if','如果','rú guǒ','🔀','yellow'],['who','谁','shéi','❓','pink'],['what','什么','shén me','❔','pink'],['am / is / are / be','是','shì','🐝','green'],['when','什么时候','shén me shí hou','🕒','pink'],['be careful','小心','xiǎo xīn','⚠️','green'],['all','全部','quán bù','🫧','peach'],['some','一些','yì xiē','🫧','peach'],['that','那个','nà ge','👉','peach'],['this','这个','zhè ge','☝️','peach']
+      ],[
+        ['he / she','他 / 她','tā','🧍','yellow'],['we / they / us','我们 / 他们','wǒ men / tā men','👨‍👩‍👧','yellow'],["not / don't",'不 / 不要','bù / bú yào','🚫','pink'],['come','过来','guò lái','🚶','green'],['do / does / did','做','zuò','👐','green'],['again','再一次','zài yí cì','🔁','aqua'],["now / it's time",'现在 / 到时间','xiàn zài','⏱️','aqua'],['how','怎么','zěn me','🔍','pink'],['why','为什么','wèi shén me','🤷','pink'],['all done / finished','完成 / 结束','wán chéng','🏁','blue'],['problem','有问题','yǒu wèn tí','🧐','peach']
+      ],[
+        ['you / your','你 / 你的','nǐ / nǐ de','🫵','yellow'],['drink','喝','hē','🥤','green'],['eat / taste','吃 / 尝','chī / cháng','🥣','green'],['feel','感觉','gǎn jué','😊','green'],['get','拿到','ná dào','🤲','green'],['late / later','迟一点 / 待会','dài huì','🕓','pink'],['ready','准备好','zhǔn bèi hǎo','🏃','aqua'],['all gone / gone','没有了','méi yǒu le','🫙','blue'],['bad','不好','bù hǎo','👎','blue'],['big','大','dà','🔴','blue'],['clean','干净','gān jìng','✨','blue']
+      ],[
+        ['give','给','gěi','🤝','green'],['go','走 / 去','zǒu / qù','🚦','green'],['hear / listen','听','tīng','👂','green'],['help','帮忙','bāng máng','🙋‍♂️','green'],['like','喜欢','xǐ huān','🥰','green'],['where','哪里','nǎ lǐ','🗺️','pink'],['away','走开','zǒu kāi','⛵','purple'],['cold','冷','lěng','🥶','blue'],['different','不一样','bù yí yàng','🔶','blue'],['dirty','脏','zāng','🧦','blue'],['fast','快','kuài','🐇','blue']
+      ],[
+        ['look / see / watch','看','kàn','👀','green'],['make','做 / 制作','zuò','🛠️','green'],['open / close','打开 / 关上','dǎ kāi / guān','📖','green'],['play','玩','wán','🪁','green'],['put','放','fàng','📥','green'],['here','这里','zhè lǐ','👇','purple'],['there','那里','nà lǐ','👉','purple'],['good','好','hǎo','👍','blue'],['happy','开心','kāi xīn','😄','blue'],['hot','热','rè','🥵','blue'],['little','小','xiǎo','🟨','blue']
+      ],[
+        ['read','读','dú','📚','green'],['say / tell','说 / 告诉','shuō','🗣️','green'],['sit','坐','zuò','🪑','green'],['stand','站','zhàn','🧍‍♂️','green'],['stop','停','tíng','🛑','green'],['in','里面','lǐ miàn','📥','purple'],['out','外面','wài miàn','📤','purple'],['more','再多一点','zài duō yì diǎn','🫴','blue'],['sad','难过','nán guò','😢','blue'],['same','一样','yí yàng','🔷','blue'],['sick / sore','不舒服 / 痛','bù shū fu','🤒','blue']
+      ],[
+        ['take','拿','ná','🤲','green'],['turn','轮流 / 转','lún liú','🔄','green'],['wait','等一下','děng yí xià','⏳','green'],['want','想要','xiǎng yào','🙌','green'],['work','做事','zuò shì','🧰','green'],['up','上','shàng','⬆️','purple'],['down','下','xià','⬇️','purple'],['on','在上面','zài shàng miàn','🔘','purple'],['off','关掉 / 离开','guān diào','⏏️','purple'],['silly','好笑','hǎo xiào','😜','blue'],['slow','慢','màn','🐢','blue']
+      ]
+    ];
+    const CORE = RAW.flatMap((row,r) => row.map((entry,c) => ({id:r+'-'+c, en:entry[0], zh:entry[1], py:entry[2], emoji:entry[3], color:entry[4]})));
+    const DEFAULT_TARGETS = ['3-1','3-3','5-4','5-7','6-3'];
+    const DEFAULT_SCENES = {
+      morning:{name:'早上出门', cards:[
+        {id:'m1',title:'起床',en:'Wake up',emoji:'☀️',status:'now'},
+        {id:'m2',title:'洗脸刷牙',en:'Wash & brush',emoji:'🪥',status:'next'},
+        {id:'m3',title:'吃早餐',en:'Breakfast',emoji:'🥣',status:'next'},
+        {id:'m4',title:'拿书包',en:'School bag',emoji:'🎒',status:'next'},
+        {id:'m5',title:'出门',en:'Let’s go',emoji:'🚶',status:'next'}]},
+      school:{name:'去学校', cards:[
+        {id:'s1',title:'背书包',en:'School bag',emoji:'🎒',status:'now'},
+        {id:'s2',title:'进教室',en:'Go inside',emoji:'🏫',status:'next'},
+        {id:'s3',title:'放好东西',en:'Put it away',emoji:'🧺',status:'next'},
+        {id:'s4',title:'看看今天做什么',en:'See the plan',emoji:'🗓️',status:'next'},
+        {id:'s5',title:'和大家一起玩',en:'Play together',emoji:'🧩',status:'next'}]},
+      play:{name:'喜欢的游戏', cards:[
+        {id:'p1',title:'玩沙坑火山',en:'Sandpit volcano',emoji:'🌋',status:'now'},
+        {id:'p2',title:'轮流玩',en:'Take turns',emoji:'🤝',status:'next'},
+        {id:'p3',title:'搭娃娃屋',en:'Dolls house',emoji:'🏠',status:'next'},
+        {id:'p4',title:'一起做松饼',en:'Make muffins',emoji:'🧁',status:'next'},
+        {id:'p5',title:'洗手',en:'Wash hands',emoji:'🧼',status:'next'}]},
+      evening:{name:'晚上休息', cards:[
+        {id:'e1',title:'洗手',en:'Wash hands',emoji:'🫧',status:'now'},
+        {id:'e2',title:'吃晚餐',en:'Dinner',emoji:'🍽️',status:'next'},
+        {id:'e3',title:'洗澡',en:'Bath',emoji:'🛁',status:'next'},
+        {id:'e4',title:'看故事书',en:'Story time',emoji:'📖',status:'next'},
+        {id:'e5',title:'睡觉',en:'Sleep',emoji:'🌙',status:'next'}]}
+    };
+    const DEFAULT_CHOICES = [{title:'玩沙坑',en:'Sandpit',emoji:'🌋'},{title:'做松饼',en:'Bake muffins',emoji:'🧁'}];
+    function clone(v) { return JSON.parse(JSON.stringify(v)); }
+    function defaults() { return {v:2,scene:'morning',scenes:clone(DEFAULT_SCENES),targetIds:DEFAULT_TARGETS.slice(),showPinyin:false,showChinese:true,speech:'en',circleMode:false,photos:[],stories:[],choices:clone(DEFAULT_CHOICES)}; }
+    function load() { try { const v=JSON.parse(localStorage.getItem(KEY)); if(v && v.v===2 && v.scenes) return Object.assign(defaults(),v); } catch(e) {} return defaults(); }
+    let data=load(), tab='routine', phrase=[], picked=-1, uploadContext=null, timerTotal=120, timerLeft=120, timerRunning=false, timerTick=null, drag=null, toastTimer=null;
+    const root=document.getElementById('main'), nav=document.getElementById('nav');
+    const $=id => document.getElementById(id);
+    function save() { try { localStorage.setItem(KEY,JSON.stringify(data)); } catch(e) { toast('本机保存空间不足，请导出备份并减少照片'); } }
+    function esc(s) { return String(s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    function toast(message) { const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600); }
+    function speak(en,zh) {
+      if(data.speech==='off') return;
+      if(!('speechSynthesis' in window)) { toast('此设备暂不支持朗读'); return; }
+      window.speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(data.speech==='zh'?(zh||en):en);
+      u.lang=data.speech==='zh'?'zh-CN':'en-NZ';u.rate=.85;
+      window.speechSynthesis.speak(u);
+    }
+    function currentScene() { return data.scenes[data.scene] || Object.values(data.scenes)[0]; }
+    function focusPair() { const cards=currentScene().cards;return [cards.find(x=>x.status==='now')||null,cards.find(x=>x.status==='next')||null]; }
+    function subtitle(title,description,emoji) { return '<section class="intro"><div><p class="eyebrow">QIXUN · VISUAL SUPPORT</p><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p></div><div class="hero-emoji" aria-hidden="true">'+emoji+'</div></section>'; }
+    function setTab(t) { tab=t; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+    function renderNav() {
+      nav.innerHTML=NAV.map(n=>'<button class="nav-tab" data-tab="'+n[0]+'" aria-current="'+(tab===n[0]?'page':'false')+'"><span aria-hidden="true">'+n[1]+'</span>'+n[2]+'</button>').join('');
+      nav.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+      $('speak-mode').textContent=data.speech==='off'?'🔇 静音':data.speech==='zh'?'🔊 中文':'🔊 英文';
+    }
+    function sceneButtons() {
+      return '<div class="grid-tools"><div class="scene-switch">'+Object.entries(data.scenes).map(([id,scene])=>'<button class="pill '+(data.scene===id?'active':'')+'" data-scene="'+esc(id)+'">'+esc(scene.name)+'</button>').join('')+'</div><button class="subtle-btn" data-action="add-task">＋ 新卡片</button></div>';
+    }
+    function changeScene(id) { if(!data.scenes[id])return;data.scene=id;save();render(); }
+    function taskCard(c) {
+      const action=c.status==='done'?'↩ 放回待做':c.status==='next'?'▶ 现在做':'✓ 完成';
+      return '<article class="task-card" data-card="'+esc(c.id)+'"><div class="task-main" data-advance="'+esc(c.id)+'" role="button" tabindex="0" aria-label="'+esc(c.title)+'，点击推进"><div class="task-symbol" aria-hidden="true">'+esc(c.emoji)+'</div><div><div class="task-title">'+esc(c.title)+'</div><div class="task-en">'+esc(c.en||'')+'</div></div></div><div class="task-actions"><button class="mini-btn primary" data-advance="'+esc(c.id)+'">'+action+'</button><button class="mini-btn" data-say="'+esc(c.id)+'">🔊</button><button class="mini-btn" data-edit="'+esc(c.id)+'">✎</button><button class="mini-btn drag-handle" data-drag="'+esc(c.id)+'" aria-label="按住拖动'+esc(c.title)+'">⠿ 拖动</button></div></article>';
+    }
+    function renderRoutine() {
+      const pair=focusPair();
+      function tile(c,label,klass) { return '<div class="focus-tile '+klass+'"><div class="focus-symbol">'+(c?esc(c.emoji):'✨')+'</div><div><div class="focus-label">'+label+'</div><div class="focus-title">'+(c?esc(c.title):'可以休息啦')+'</div><div class="focus-en">'+(c?esc(c.en):'All done')+'</div></div></div>'; }
+      const lanes=[['now','正在做 NOW','🍃'],['next','接下来 NEXT','☀️'],['done','做过了 DONE','⭐']];
+      root.innerHTML=subtitle('今天，一步一步来','每张卡代表一件事。点卡片向前推进，也可以按住「拖动」跨列移动。','🛝')+sceneButtons()+
+        '<div class="section-label"><h3>👀 现在看这里</h3><small>也可以切换到「先 / 然后」大卡片</small></div><div class="focus-strip">'+tile(pair[0],'先做 FIRST','')+tile(pair[1],'然后 THEN','then')+'</div>'+
+        '<div class="section-label"><h3>🗂️ 我的 Trello 看板</h3><small>点卡推进 · 按住拖动 · 不需要答题</small></div><div class="board">'+lanes.map(l=>{
+          const cards=currentScene().cards.filter(c=>c.status===l[0]);
+          return '<section class="lane" data-status="'+l[0]+'"><div class="lane-head"><span><span class="lane-dot"></span>'+l[1]+'</span><span class="count">'+cards.length+'</span></div>'+ (cards.length?cards.map(taskCard).join(''):'<div class="empty">把卡片拖到这里<br>或者点卡片推进</div>')+'</section>';
+        }).join('')+'</div>';
+    }
+    function renderCore() {
+      const chosen=phrase.map(w=>'<button class="word-chip" title="点击删除" data-unword="'+esc(w.id)+'">'+esc(w.en)+' ×</button>').join('');
+      const cells=CORE.map(w=>'<button class="core-cell '+w.color+' '+(data.targetIds.includes(w.id)?'target ':'')+(data.circleMode?'circle-edit':'')+'" data-core="'+w.id+'" aria-label="'+esc(w.en+', '+w.zh+(data.targetIds.includes(w.id)?'，本周示范词':''))+'"><span class="core-en">'+esc(w.en)+'</span><span class="core-icon" aria-hidden="true">'+w.emoji+'</span>'+(data.showChinese?'<span class="core-zh">'+esc(w.zh)+'</span>':'')+(data.showPinyin?'<span class="core-py">'+esc(w.py)+'</span>':'')+'</button>').join('');
+      root.innerHTML=subtitle('跟纸质板一样的位置','7 行 × 11 列固定词序，下面是 yes、1–5、no。橙色圈圈表示本周示范词。','💬')+
+        '<div class="core-intro"><strong>给大人：</strong>边指边说就可以，一次示范一个或两个有用的词。不需要考启洵、逼他指、要求复述，或者为了让他点板而暂停活动。'+(data.circleMode?' <strong>⭕ 圈词编辑已打开：点击格子切换圈选。</strong>':'')+'</div>'+
+        '<div class="composer"><div><div style="font-size:11px;color:#b7e1d5;font-weight:900">一起说 · OUR WORDS</div><div class="words">'+(chosen||'<span style="color:#c8e0db">点一个词，慢慢组成短句…</span>')+'</div></div><div class="composer-actions"><button class="mini-btn primary" data-core-action="speak">🔊 读出来</button><button class="mini-btn" data-core-action="clear">清空</button></div></div>'+
+        '<div class="core-scroll" role="region" aria-label="与纸质版位置一致的核心词板" tabindex="0"><div class="core-grid">'+cells+'</div><div class="numbers">'+[['yes','是','✅'],['1','一','1'],['2','二','2'],['3','三','3'],['4','四','4'],['5','五','5'],['no','不','❌']].map(n=>'<button class="number-btn '+(n[0]==='yes'?'yes':n[0]==='no'?'no':'')+'" data-number="'+n[0]+'" data-zh="'+n[1]+'">'+n[2]+'</button>').join('')+'</div></div>'+
+        '<div class="quick-phrases"><span class="hint">可以直接示范：</span>'+[['My turn','轮到我'],['Your turn','轮到你'],['Go wash','去洗'],["Don't flush it",'不要冲水'],['Make muffins','做松饼'],['Too big','太大了']].map(x=>'<button data-phrase="'+esc(x[0])+'" data-zh="'+esc(x[1])+'">'+esc(x[0])+'</button>').join('')+'</div><p class="hint">💡 小屏可左右滑动词板；横屏能一次看到全部格子。词序固定，图标是本应用的视觉提示，并非复印纸板原插画。</p>';
+    }
+    function renderFirst() {
+      const pair=focusPair();
+      function step(c,label) { return '<div class="big-step"><span class="focus-label">'+label+'</span><span class="big-emoji">'+(c?esc(c.emoji):'✨')+'</span><strong>'+esc(c?c.title:'完成啦')+'</strong><small>'+esc(c?c.en:'All done')+'</small>'+(c?'<button class="mini-btn" style="margin-top:14px" data-say="'+esc(c.id)+'">🔊 听一听</button>':'')+'</div>'; }
+      root.innerHTML=subtitle('先做这个，再做那个','只显示两个步骤，用短句配合手势。流程从今天的 Trello 看板同步。','🌈')+
+        sceneButtons()+
+        '<div class="firstthen">'+step(pair[0],'1 · 先做 FIRST')+step(pair[1],'2 · 然后 THEN')+'</div>'+
+        '<div class="timer-card"><div class="timer-ring" id="timer-ring"><div class="timer-inner"><div><strong id="timer-time">02:00</strong><div class="hint">看得见的时间</div></div></div></div><div><h3 style="margin:0">⏲️ 温柔的计时器</h3><p class="hint">时间只帮助预告变化，不会自动锁住下一步，也不要求点词板。</p><div class="timer-control"><button data-minutes="2">2 分钟</button><button data-minutes="5">5 分钟</button><button data-minutes="10">10 分钟</button></div><div class="timer-control"><button class="primary" id="timer-start">'+(timerRunning?'暂停':'开始')+'</button><button id="timer-reset">重来</button></div></div></div>';
+      updateTimerUI();
+    }
+    function renderChoices() {
+      root.innerHTML=subtitle('两个里面，你想选哪个？','只给两个清楚的选项。看一看、指一指、说一说都可以。','🎯')+
+        '<div class="grid-tools"><p class="hint">选择之后也可以改变主意，没有对错。</p><button class="subtle-btn" data-action="edit-choices">✎ 大人修改选项</button></div>'+
+        '<div class="choice-row">'+data.choices.slice(0,2).map((c,i)=>'<button class="choice-card '+(picked===i?'chosen':'')+'" data-choice="'+i+'"><span class="choice-emoji">'+esc(c.emoji)+'</span><strong>'+esc(c.title)+'</strong><small>'+esc(c.en||'')+'</small><span class="hint">'+(picked===i?'✓ 我看看这个':'点一下听一听')+'</span></button>').join('')+'</div>';
+    }
+    function renderPhotos(kind) {
+      const isAccess=kind==='access', items=isAccess?data.photos:data.stories;
+      root.innerHTML=subtitle(isAccess?'什么可以用，什么暂时不能用':'把熟悉的照片排成故事',isAccess?'把真实环境拍下来，给物品贴上「可以用」或「暂时不能用」标签；由大人按实际情况决定。':'入学、外出、换活动前，可以一起看看熟悉的照片和简短说明。',isAccess?'📷':'📖')+
+        '<div class="grid-tools"><p class="hint">'+(isAccess?'这里不预设学校的任何禁令，请根据现场和老师的安排添加。':'按添加顺序展示照片；可以讲一遍，也可以反复看。')+'</p><button class="subtle-btn" data-action="'+(isAccess?'add-access':'add-story')+'">＋ 添加真实照片</button></div>'+
+        (items.length?'<div class="'+(isAccess?'photo-grid':'story-list')+'">'+items.map((p,i)=>'<article class="photo-card">'+(p.image?'<img class="photo-img" src="'+esc(p.image)+'" alt="'+esc(p.title)+'">':'<div class="photo-placeholder">📸</div>')+'<div class="photo-meta"><div class="photo-title">'+esc(p.title)+'</div>'+(!isAccess&&p.caption?'<p class="hint">'+esc(p.caption)+'</p>':'')+(isAccess?'<div class="photo-label '+(p.allowed?'':'nope')+'">'+(p.allowed?'✅ 可以用':'⛔ 暂时不能用')+'</div>':'<div class="hint">第 '+(i+1)+' 张</div>')+'<div class="photo-actions"><button class="mini-btn" data-photo-say="'+kind+':'+i+'">🔊</button>'+(isAccess?'<button class="mini-btn" data-photo-toggle="'+i+'">⇄ 切换标签</button>':'')+'<button class="mini-btn" data-photo-edit="'+kind+':'+i+'">✎</button><button class="mini-btn danger" data-photo-delete="'+kind+':'+i+'">删除</button></div></div></article>').join('')+'</div>':'<div class="empty" style="min-height:260px"><div><div style="font-size:72px">📸</div><strong>还没有照片</strong><br>点「添加真实照片」，从 iPad 相册选择或用相机拍一张。<br>照片只留在这台设备。</div></div>');
+    }
+    function render() { renderNav(); if(tab==='routine')renderRoutine();else if(tab==='core')renderCore();else if(tab==='first')renderFirst();else if(tab==='choices')renderChoices();else if(tab==='access')renderPhotos('access');else renderPhotos('story'); }
+    function findCard(id) { return currentScene().cards.find(c=>c.id===id); }
+    function moveCard(id,status) {
+      const cards=currentScene().cards, card=findCard(id);if(!card)return;
+      card.status=status;
+      if(status==='now') cards.forEach(c=>{if(c.id!==id&&c.status==='now')c.status='next';});
+      if(status==='done' && !cards.some(c=>c.status==='now')) { const n=cards.find(c=>c.status==='next');if(n)n.status='now'; }
+      save();render();
+    }
+    function advance(id) { const c=findCard(id);if(!c)return;moveCard(id,c.status==='now'?'done':c.status==='next'?'now':'next'); }
+    function editTask(id) {
+      const c=id?findCard(id):null;
+      const title=prompt('卡片中文名称',c?c.title:'新步骤');if(title===null||!title.trim())return;
+      const en=prompt('英文（可留空）',c?c.en:'');if(en===null)return;
+      const emoji=prompt('图案（输入一个 emoji，例如 🎒 🧼 🌋）',c?c.emoji:'⭐');if(emoji===null)return;
+      if(c) { c.title=title.trim();c.en=en.trim();c.emoji=emoji||'⭐'; }
+      else currentScene().cards.push({id:'t'+Date.now(),title:title.trim(),en:en.trim(),emoji:emoji||'⭐',status:'next'});
+      save();render();
+    }
+    function openSettings() { syncSettings();$('settings').classList.add('open'); }
+    function closeSettings() { $('settings').classList.remove('open'); }
+    function syncSettings() { $('pinyin-toggle').checked=data.showPinyin;$('chinese-toggle').checked=data.showChinese;$('circle-toggle').checked=data.circleMode;$('speech-select').value=data.speech; }
+    function addScene() { const name=prompt('新场景名称（例如：周末外出）');if(!name||!name.trim())return;const id='scene'+Date.now();data.scenes[id]={name:name.trim(),cards:[]};data.scene=id;save();closeSettings();setTab('routine'); }
+    function renameScene() { const name=prompt('修改场景名称',currentScene().name);if(!name||!name.trim())return;currentScene().name=name.trim();save();render(); }
+    function resetScene() {
+      if(!confirm('恢复当前场景预设？这个场景自定义卡片和进度会被替换。'))return;
+      if(DEFAULT_SCENES[data.scene])data.scenes[data.scene]=clone(DEFAULT_SCENES[data.scene]);
+      else currentScene().cards=[];
+      save();render();toast('已恢复当前场景');
+    }
+    function editChoices() {
+      data.choices.slice(0,2).forEach((c,i)=>{
+        const title=prompt('选项 '+(i+1)+' 的中文名称',c.title);if(title!==null&&title.trim())c.title=title.trim();
+        const en=prompt('选项 '+(i+1)+' 的英文',c.en);if(en!==null)c.en=en.trim();
+        const emoji=prompt('选项 '+(i+1)+' 的图案（emoji）',c.emoji);if(emoji!==null&&emoji.trim())c.emoji=emoji.trim();
+      });
+      picked=-1;save();render();
+    }
+    function beginUpload(kind) {
+      const title=prompt(kind==='access'?'照片里的物品或地点叫什么？':'这张故事照片叫什么？');if(!title||!title.trim())return;
+      let caption='',allowed=true;
+      if(kind==='access')allowed=confirm('这个物品/地点现在可以使用吗？\n按「确定」= 可以用；按「取消」= 暂时不能用');
+      else {const value=prompt('给照片配一句简短说明（可留空）','');if(value===null)return;caption=value;}
+      uploadContext={kind,title:title.trim(),caption,allowed};$('photo-file').value='';$('photo-file').click();
+    }
+    function compressPhoto(file) {
+      return new Promise((resolve,reject)=>{
+        const fr=new FileReader();fr.onerror=()=>reject(new Error('文件读取失败'));fr.onload=()=>{
+          const img=new Image();img.onerror=()=>reject(new Error('无法打开照片'));img.onload=()=>{
+            const ratio=Math.min(1,900/Math.max(img.width,img.height));
+            const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*ratio));canvas.height=Math.max(1,Math.round(img.height*ratio));
+            canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+            resolve(canvas.toDataURL('image/jpeg',.66));
+          };img.src=fr.result;
+        };fr.readAsDataURL(file);
+      });
+    }
+    async function storePhoto(file) {
+      if(!file||!uploadContext)return;
+      try {
+        const image=await compressPhoto(file), x=Object.assign({id:'ph'+Date.now(),image},uploadContext);
+        const list=x.kind==='access'?data.photos:data.stories;list.push(x);
+        save();const kind=x.kind;uploadContext=null;closeSettings();setTab(kind);toast('已添加照片');
+      } catch(e) {toast('照片未能加入：'+e.message);}
+    }
+    function editPhoto(kind,index) {
+      const p=(kind==='access'?data.photos:data.stories)[index];if(!p)return;
+      const title=prompt('照片名称',p.title);if(title!==null&&title.trim())p.title=title.trim();
+      if(kind==='story') {const cap=prompt('一句话故事',p.caption||'');if(cap!==null)p.caption=cap;}
+      save();render();
+    }
+    function downloadBackup() {
+      const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+      a.href=url;a.download='qixun-coreboard-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
+      toast('已导出备份文件');
+    }
+    function importBackup(file) {
+      const r=new FileReader();r.onload=()=>{
+        try {
+          const v=JSON.parse(r.result);
+          if(!v||v.v!==2||!v.scenes||!Array.isArray(v.photos)||!Array.isArray(v.stories)||!Array.isArray(v.targetIds))throw Error('格式不匹配');
+          if(!confirm('导入备份会替换当前 v2 的所有自定义内容。确认继续吗？'))return;
+          data=Object.assign(defaults(),v);data.circleMode=false;save();closeSettings();render();toast('备份导入成功');
+        } catch(e) {toast('导入失败：'+e.message);}
+      };r.readAsText(file);
+    }
+    function updateTimerUI() {
+      const circle=$('timer-ring'),time=$('timer-time');if(!circle||!time)return;
+      const min=Math.floor(timerLeft/60),sec=Math.max(0,timerLeft%60);
+      time.textContent=String(min).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+      circle.style.setProperty('--progress',(Math.max(0,timerLeft)/timerTotal*100)+'%');
+    }
+    function timerPause() {timerRunning=false;if(timerTick)clearInterval(timerTick);timerTick=null;}
+    function timerStart() {
+      if(timerRunning) {timerPause();renderFirst();return;}
+      if(timerLeft<=0)timerLeft=timerTotal;
+      timerRunning=true;timerTick=setInterval(()=>{timerLeft=Math.max(0,timerLeft-1);updateTimerUI();if(timerLeft===0){timerPause();toast('时间到了，可以一起看看下一步');const b=$('timer-start');if(b)b.textContent='重新开始';}},1000);renderFirst();
+    }
+    function setTimer(minutes) {timerPause();timerTotal=minutes*60;timerLeft=timerTotal;renderFirst();}
+    function delegatedClick(e) {
+      const b=e.target.closest('[data-scene],[data-action],[data-advance],[data-edit],[data-say],[data-core],[data-core-action],[data-number],[data-unword],[data-phrase],[data-choice],[data-minutes],[data-photo-say],[data-photo-toggle],[data-photo-edit],[data-photo-delete]');
+      if(!b)return;
+      if(b.dataset.scene)return changeScene(b.dataset.scene);
+      if(b.dataset.advance)return advance(b.dataset.advance);
+      if(b.dataset.edit)return editTask(b.dataset.edit);
+      if(b.dataset.say){const c=findCard(b.dataset.say);if(c)speak(c.en||c.title,c.title);return;}
+      if(b.dataset.core){
+        const w=CORE.find(x=>x.id===b.dataset.core);if(!w)return;
+        if(data.circleMode) {data.targetIds=data.targetIds.includes(w.id)?data.targetIds.filter(x=>x!==w.id):data.targetIds.concat(w.id);save();renderCore();return;}
+        phrase.push(w);speak(w.en,w.zh);renderCore();return;
+      }
+      if(b.dataset.coreAction==='clear'){phrase=[];renderCore();return;}
+      if(b.dataset.coreAction==='speak'){if(phrase.length)speak(phrase.map(w=>w.en).join(' '),phrase.map(w=>w.zh).join(' '));return;}
+      if(b.dataset.unword){const i=phrase.findIndex(w=>w.id===b.dataset.unword);if(i>=0)phrase.splice(i,1);renderCore();return;}
+      if(b.dataset.number){speak(b.dataset.number,b.dataset.zh);return;}
+      if(b.dataset.phrase){speak(b.dataset.phrase,b.dataset.zh);return;}
+      if(b.dataset.choice!==undefined){picked=Number(b.dataset.choice);const c=data.choices[picked];speak(c.en||c.title,c.title);renderChoices();return;}
+      if(b.dataset.minutes)return setTimer(Number(b.dataset.minutes));
+      if(b.dataset.photoSay){const [kind,i]=b.dataset.photoSay.split(':'),p=(kind==='access'?data.photos:data.stories)[Number(i)];if(p)speak(p.title+(kind==='access'?(p.allowed?' available':' not available'):'') ,p.title+(kind==='access'?(p.allowed?'，可以用':'，暂时不能用'):'。'+(p.caption||'')));return;}
+      if(b.dataset.photoToggle!==undefined){const p=data.photos[Number(b.dataset.photoToggle)];if(p){p.allowed=!p.allowed;save();render();}return;}
+      if(b.dataset.photoEdit){const [kind,i]=b.dataset.photoEdit.split(':');return editPhoto(kind,Number(i));}
+      if(b.dataset.photoDelete){const [kind,i]=b.dataset.photoDelete.split(':');if(confirm('删除这张照片？')){(kind==='access'?data.photos:data.stories).splice(Number(i),1);save();render();}return;}
+      if(b.dataset.action==='add-task')return editTask(null);
+      if(b.dataset.action==='edit-choices')return editChoices();
+      if(b.dataset.action==='add-access')return beginUpload('access');
+      if(b.dataset.action==='add-story')return beginUpload('story');
+    }
+    root.addEventListener('click',delegatedClick);
+    root.addEventListener('keydown',e=>{const t=e.target.closest('[data-advance]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();advance(t.dataset.advance);}});
+    // Pointer Events: finger/Apple Pencil/mouse dragging between Trello columns.
+    root.addEventListener('pointerdown',e=>{
+      const handle=e.target.closest('[data-drag]');if(!handle||tab!=='routine')return;
+      const card=handle.closest('.task-card');if(!card)return;
+      e.preventDefault();drag={id:handle.dataset.drag,card,startX:e.clientX,startY:e.clientY};
+      card.classList.add('dragging');try{handle.setPointerCapture(e.pointerId);}catch(err){}
+    });
+    root.addEventListener('pointermove',e=>{
+      if(!drag)return;drag.card.style.transform='translate('+(e.clientX-drag.startX)+'px,'+(e.clientY-drag.startY)+'px)';
+      document.querySelectorAll('.lane').forEach(x=>x.classList.remove('drag-over'));
+      const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest('.lane');if(lane)lane.classList.add('drag-over');
+    });
+    function endDrag(e) {
+      if(!drag)return;
+      const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest('.lane');
+      const id=drag.id,card=drag.card;drag=null;card.style.transform='';card.classList.remove('dragging');
+      document.querySelectorAll('.lane').forEach(x=>x.classList.remove('drag-over'));
+      if(lane)moveCard(id,lane.dataset.status);
+    }
+    root.addEventListener('pointerup',endDrag);
+    root.addEventListener('pointercancel',()=>{if(!drag)return;drag.card.style.transform='';drag.card.classList.remove('dragging');drag=null;document.querySelectorAll('.lane').forEach(x=>x.classList.remove('drag-over'));});
+    $('settings-open').onclick=openSettings;$('settings-close').onclick=closeSettings;
+    $('settings').addEventListener('click',e=>{if(e.target===$('settings'))closeSettings();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings();});
+    $('speak-mode').onclick=()=>{data.speech=data.speech==='en'?'zh':data.speech==='zh'?'off':'en';save();renderNav();toast(data.speech==='off'?'已静音':data.speech==='zh'?'中文朗读':'英文朗读');};
+    $('pinyin-toggle').onchange=e=>{data.showPinyin=e.target.checked;save();render();};
+    $('chinese-toggle').onchange=e=>{data.showChinese=e.target.checked;save();render();};
+    $('circle-toggle').onchange=e=>{data.circleMode=e.target.checked;save();render();};
+    $('speech-select').onchange=e=>{data.speech=e.target.value;save();renderNav();};
+    $('reset-targets').onclick=()=>{data.targetIds=DEFAULT_TARGETS.slice();save();render();toast('已恢复五个示范词');};
+    $('go-core').onclick=()=>{closeSettings();setTab('core');};
+    $('add-scene').onclick=addScene;$('rename-scene').onclick=renameScene;$('add-task').onclick=()=>{closeSettings();setTab('routine');editTask(null);};
+    $('reset-scene').onclick=resetScene;$('edit-choices').onclick=()=>{closeSettings();setTab('choices');editChoices();};
+    $('add-access').onclick=()=>beginUpload('access');$('add-story').onclick=()=>beginUpload('story');
+    $('photo-file').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)storePhoto(f);};
+    $('export-data').onclick=downloadBackup;$('import-data').onclick=()=>$('backup-file').click();
+    $('backup-file').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importBackup(f);e.target.value='';};
+    $('reset-all').onclick=()=>{if(!confirm('确定清除本版全部本机设置、照片和流程吗？此操作不可撤销，请先导出备份。'))return;data=defaults();phrase=[];picked=-1;save();closeSettings();setTab('routine');toast('已恢复初始状态');};
+    root.addEventListener('click',e=>{if(e.target.id==='timer-start')timerStart();if(e.target.id==='timer-reset'){timerPause();timerLeft=timerTotal;renderFirst();}});
+    if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    render();
+  })();
+  </script>
+</body>
+</html>

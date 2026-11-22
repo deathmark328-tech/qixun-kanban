@@ -1,0 +1,16 @@
+{
+  "name": "启洵的 Coreboard · 视觉沟通与流程看板",
+  "short_name": "启洵 Coreboard",
+  "description": "与纸质 Coreboard 对位的沟通板、Trello 流程、先后顺序与照片支持。",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f5ef",
+  "theme_color": "#264a52",
+  "icons": [
+    {"src": "../icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "../icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
