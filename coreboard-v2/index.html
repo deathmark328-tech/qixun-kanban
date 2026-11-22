@@ -296,15 +296,15 @@
     function changeScene(id) { if(!data.scenes[id])return;data.scene=id;save();render(); }
     function taskCard(c) {
       const action=c.status==='done'?'↩ 放回待做':c.status==='next'?'▶ 现在做':'✓ 完成';
-      return '<article class="task-card" data-card="'+esc(c.id)+'"><div class="task-main" data-advance="'+esc(c.id)+'" role="button" tabindex="0" aria-label="'+esc(c.title)+'，点击推进"><div class="task-symbol" aria-hidden="true">'+esc(c.emoji)+'</div><div><div class="task-title">'+esc(c.title)+'</div><div class="task-en">'+esc(c.en||'')+'</div></div></div><div class="task-actions"><button class="mini-btn primary" data-advance="'+esc(c.id)+'">'+action+'</button><button class="mini-btn" data-say="'+esc(c.id)+'">🔊</button><button class="mini-btn" data-edit="'+esc(c.id)+'">✎</button><button class="mini-btn drag-handle" data-drag="'+esc(c.id)+'" aria-label="按住拖动'+esc(c.title)+'">⠿ 拖动</button></div></article>';
+      return '<article class="task-card" data-card="'+esc(c.id)+'"><div class="task-main" data-advance="'+esc(c.id)+'" role="button" tabindex="0" aria-label="'+esc(c.title)+'，点击推进"><div class="task-symbol" aria-hidden="true">'+esc(c.emoji)+'</div><div><div class="task-title">'+esc(c.title)+'</div><div class="task-en">'+esc(c.en||'')+'</div></div></div><div class="task-actions"><button class="mini-btn primary" data-advance="'+esc(c.id)+'">'+action+'</button><button class="mini-btn" data-say="'+esc(c.id)+'">🔊</button><button class="mini-btn" data-edit="'+esc(c.id)+'">✎</button><button class="mini-btn drag-handle" data-drag="'+esc(c.id)+'" aria-label="按住拖动'+esc(c.title)+'">⠿ 拖动</button><button class="mini-btn danger" data-remove="'+esc(c.id)+'" aria-label="删除'+esc(c.title)+'">✕</button></div></article>';
     }
     function renderRoutine() {
       const pair=focusPair();
       function tile(c,label,klass) { return '<div class="focus-tile '+klass+'"><div class="focus-symbol">'+(c?esc(c.emoji):'✨')+'</div><div><div class="focus-label">'+label+'</div><div class="focus-title">'+(c?esc(c.title):'可以休息啦')+'</div><div class="focus-en">'+(c?esc(c.en):'All done')+'</div></div></div>'; }
-      const lanes=[['now','正在做 NOW','🍃'],['next','接下来 NEXT','☀️'],['done','做过了 DONE','⭐']];
+      const lanes=[['now','现在 NOW','🍃'],['next','等待 / 接下来 WAIT','☀️'],['done','做过了 DONE','⭐']];
       root.innerHTML=subtitle('今天，一步一步来','每张卡代表一件事。点卡片向前推进，也可以按住「拖动」跨列移动。','🛝')+sceneButtons()+
         '<div class="section-label"><h3>👀 现在看这里</h3><small>也可以切换到「先 / 然后」大卡片</small></div><div class="focus-strip">'+tile(pair[0],'先做 FIRST','')+tile(pair[1],'然后 THEN','then')+'</div>'+
-        '<div class="section-label"><h3>🗂️ 我的 Trello 看板</h3><small>点卡推进 · 按住拖动 · 不需要答题</small></div><div class="board">'+lanes.map(l=>{
+        '<div class="section-label"><h3>🗂️ 我的 Trello 看板</h3><small>点卡推进 · 按住拖动排序/跨列 · 不需要答题</small></div><div class="board">'+lanes.map(l=>{
           const cards=currentScene().cards.filter(c=>c.status===l[0]);
           return '<section class="lane" data-status="'+l[0]+'"><div class="lane-head"><span><span class="lane-dot"></span>'+l[1]+'</span><span class="count">'+cards.length+'</span></div>'+ (cards.length?cards.map(taskCard).join(''):'<div class="empty">把卡片拖到这里<br>或者点卡片推进</div>')+'</section>';
         }).join('')+'</div>';
@@ -340,14 +340,26 @@
     }
     function render() { renderNav(); if(tab==='routine')renderRoutine();else if(tab==='core')renderCore();else if(tab==='first')renderFirst();else if(tab==='choices')renderChoices();else if(tab==='access')renderPhotos('access');else renderPhotos('story'); }
     function findCard(id) { return currentScene().cards.find(c=>c.id===id); }
-    function moveCard(id,status) {
+    function moveCard(id,status,beforeId) {
       const cards=currentScene().cards, card=findCard(id);if(!card)return;
+      if(beforeId && beforeId!==id) {
+        cards.splice(cards.indexOf(card),1);
+        const at=cards.findIndex(c=>c.id===beforeId);
+        cards.splice(at>=0?at:cards.length,0,card);
+      }
       card.status=status;
       if(status==='now') cards.forEach(c=>{if(c.id!==id&&c.status==='now')c.status='next';});
       if(status==='done' && !cards.some(c=>c.status==='now')) { const n=cards.find(c=>c.status==='next');if(n)n.status='now'; }
       save();render();
     }
     function advance(id) { const c=findCard(id);if(!c)return;moveCard(id,c.status==='now'?'done':c.status==='next'?'now':'next'); }
+    function removeTask(id) {
+      const cards=currentScene().cards,c=findCard(id);
+      if(!c||!confirm('删除「'+c.title+'」这张流程卡？'))return;
+      cards.splice(cards.indexOf(c),1);
+      if(!cards.some(x=>x.status==='now')){const n=cards.find(x=>x.status==='next');if(n)n.status='now';}
+      save();render();
+    }
     function editTask(id) {
       const c=id?findCard(id):null;
       const title=prompt('卡片中文名称',c?c.title:'新步骤');if(title===null||!title.trim())return;
@@ -438,11 +450,12 @@
     }
     function setTimer(minutes) {timerPause();timerTotal=minutes*60;timerLeft=timerTotal;renderFirst();}
     function delegatedClick(e) {
-      const b=e.target.closest('[data-scene],[data-action],[data-advance],[data-edit],[data-say],[data-core],[data-core-action],[data-number],[data-unword],[data-phrase],[data-choice],[data-minutes],[data-photo-say],[data-photo-toggle],[data-photo-edit],[data-photo-delete]');
+      const b=e.target.closest('[data-scene],[data-action],[data-advance],[data-edit],[data-remove],[data-say],[data-core],[data-core-action],[data-number],[data-unword],[data-phrase],[data-choice],[data-minutes],[data-photo-say],[data-photo-toggle],[data-photo-edit],[data-photo-delete]');
       if(!b)return;
       if(b.dataset.scene)return changeScene(b.dataset.scene);
       if(b.dataset.advance)return advance(b.dataset.advance);
       if(b.dataset.edit)return editTask(b.dataset.edit);
+      if(b.dataset.remove)return removeTask(b.dataset.remove);
       if(b.dataset.say){const c=findCard(b.dataset.say);if(c)speak(c.en||c.title,c.title);return;}
       if(b.dataset.core){
         const w=CORE.find(x=>x.id===b.dataset.core);if(!w)return;
@@ -481,10 +494,12 @@
     });
     function endDrag(e) {
       if(!drag)return;
-      const lane=document.elementFromPoint(e.clientX,e.clientY)?.closest('.lane');
+      const underneath=document.elementFromPoint(e.clientX,e.clientY);
+      const lane=underneath?.closest('.lane');
+      const dropCard=underneath?.closest('.task-card');
       const id=drag.id,card=drag.card;drag=null;card.style.transform='';card.classList.remove('dragging');
       document.querySelectorAll('.lane').forEach(x=>x.classList.remove('drag-over'));
-      if(lane)moveCard(id,lane.dataset.status);
+      if(lane)moveCard(id,lane.dataset.status,dropCard?.dataset.card);
     }
     root.addEventListener('pointerup',endDrag);
     root.addEventListener('pointercancel',()=>{if(!drag)return;drag.card.style.transform='';drag.card.classList.remove('dragging');drag=null;document.querySelectorAll('.lane').forEach(x=>x.classList.remove('drag-over'));});
