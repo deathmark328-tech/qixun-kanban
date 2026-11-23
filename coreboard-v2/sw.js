@@ -1,4 +1,4 @@
-const CACHE = 'qixun-coreboard-v2-20261122-2';
+const CACHE = 'qixun-coreboard-v2-20261123-3';
 const FILES = ['./', './index.html', './manifest.webmanifest', '../icon-192.png', '../icon-512.png'];
 const audioFiles = [
   ...Array.from({length:7},(_,r)=>Array.from({length:11},(_,c)=>'./audio/core/'+r+'-'+c+'.mp3')).flat(),
