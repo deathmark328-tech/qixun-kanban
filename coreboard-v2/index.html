@@ -207,6 +207,47 @@
       .choice-card strong { font-size:24px; }
       .settings-panel { padding:19px; }
     }
+
+    /* Therapist review: a two-column routine and larger, genuinely distinct AAC symbols. */
+    .board { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .lane[data-status="todo"]{background:#e1f0eb}
+    .lane[data-status="done"]{background:#f1f0e8}
+    .now-card{border:4px solid #237b78;border-radius:20px;padding:5px;background:#d8f3e8;margin-bottom:10px}
+    .now-card .task-card{margin-bottom:0}
+    .now-banner{color:#165b59;font-weight:950;font-size:19px;padding:7px 10px}
+    .core-icon{font-size:54px;line-height:1.12;width:100%;height:74px;display:flex;align-items:center;justify-content:center}
+    .core-icon svg{display:block;width:min(98%,120px);height:100%;max-height:78px}
+    .core-cell{min-height:142px;gap:5px}
+    .core-grid.paged .core-cell{min-height:164px}
+    .core-grid.paged .core-icon{font-size:64px;height:91px}
+    .core-grid.paged .core-icon svg{width:min(98%,140px);max-height:93px}
+    .first-presets{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 20px}
+    .first-presets .pill{min-height:66px;font-size:16px}
+    .print-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:7px 0 13px}
+    .photo-card{position:relative}
+    .availability-emblem{position:absolute;right:14px;top:14px;border-radius:50%;height:73px;width:73px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.94);border:7px solid #24976c;color:#24976c;font-size:48px;font-weight:950;box-shadow:0 5px 14px #2637}
+    .availability-emblem.no{border-color:#c43837;color:#c43837}
+    .availability-emblem.no:after{content:"";position:absolute;width:58px;height:8px;background:#c43837;border-radius:8px;transform:rotate(-43deg)}
+    @media(max-width:760px){.board{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.lane{padding:7px}.task-card{padding:9px}.task-title{font-size:16px}.task-en{font-size:15px}.now-banner{font-size:14px}.core-cell{min-height:128px}.core-grid.paged .core-cell{min-height:145px}.core-grid.paged .core-icon{font-size:55px;height:75px}}
+    @page{size:A3 landscape;margin:7mm}
+    @media print{
+      html,body{background:white!important;color:#172f39!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .app-shell{max-width:none;width:100%;padding:0!important;margin:0}
+      .masthead,.nav,.module-pager,.footer,.composer,.core-intro,.core-pager,.quick-phrases,.print-actions,.audio-status,.settings,.toast,.hero-emoji{display:none!important}
+      #main>*{display:none!important}
+      #main:before{content:"启洵 · QIXUN COREBOARD   |   7 × 11";display:block;text-align:center;font-size:21px;line-height:29px;font-weight:950;color:#24494d}
+      #main>.core-scroll{display:block!important;border:none;overflow:visible;width:100%;box-shadow:none}
+      .core-grid.full{min-width:0!important;grid-template-columns:repeat(11,minmax(0,1fr));gap:1.5px;padding:2px}
+      .core-grid.full .core-cell{min-height:128px;break-inside:avoid;padding:3px 1px;gap:2px;border:1px solid #597d74;border-radius:0}
+      .core-grid.full .core-icon{font-size:41px;height:64px}
+      .core-grid.full .core-icon svg{max-height:64px;max-width:90px}
+      .core-grid.full .core-en{font-size:13px!important;line-height:1.07;word-break:break-word}
+      .core-grid.full .core-zh{font-size:11px!important}
+      .core-grid.full .core-py{display:none!important}
+      .core-grid.full .core-cell.target:after{display:none}
+      .numbers.full{min-width:0!important;padding:6px}
+      .number-btn{min-height:49px;min-width:57px;font-size:18px}
+    }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
   </style>
 </head>
@@ -220,7 +261,7 @@
     <main id="main" aria-live="off"></main>
     <div class="module-pager" id="module-pager" aria-label="功能页面翻页 / Section navigation"></div>
     <div class="audio-status" id="audio-status" role="status" aria-live="polite"></div>
-    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.3<br>Saved on this device · Home and school use</span></footer>
+    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.4<br>Saved on this device · Home and school use</span></footer>
   </div>
   <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="大人设置 / Adult settings">
     <div class="settings-panel">
@@ -231,7 +272,7 @@
       <div class="field-row"><label for="chinese-toggle"><span class="bi bi-start"><span class="bi-zh">显示中文标签</span><span class="bi-en">Show Chinese labels</span></span></label><input id="chinese-toggle" type="checkbox"></div>
       <div class="field-row"><label for="speech-select"><span class="bi bi-start"><span class="bi-zh">点击卡片朗读</span><span class="bi-en">Tap-to-speak language</span></span></label><select id="speech-select"><option value="en">英文 / English</option><option value="zh">中文 / Chinese</option><option value="off">静音 / Mute</option></select></div>
       <div class="button-row"><button class="subtle-btn" id="test-voice"><span class="bi"><span class="bi-zh">🔊 播放英文测试音</span><span class="bi-en">Test English audio</span></span></button></div>
-      <p>英文常用词和预设流程内置离线音频。中文朗读由 iPad 自带语音提供。<br>Common English words and preset routines have offline audio. Chinese speech uses the iPad's system voice.</p>
+      <p>英文常用词与预设流程已使用本地 Piper 神经语音预录并可离线播放。中文仍使用 iPad 系统语音。<br>English core words and routines use offline Piper neural voice recordings. Chinese speech uses the iPad system voice.</p>
       <h3>⭕ 本周示范词 / This week's model words</h3>
       <p>打开圈词编辑，在沟通板点选少量目标词，方便大人寻找。<br>Turn on target editing, then tap a few words to highlight for adult modelling.</p>
       <div class="field-row"><label for="circle-toggle"><span class="bi bi-start"><span class="bi-zh">圈词编辑模式</span><span class="bi-en">Edit highlighted words</span></span></label><input id="circle-toggle" type="checkbox"></div>
@@ -251,6 +292,7 @@
   <input id="backup-file" type="file" accept="application/json,.json" hidden>
   <audio id="voice-audio" preload="none" playsinline></audio>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./icons.js"></script>
   <script>
   (function () {
     'use strict';
@@ -305,9 +347,14 @@
         {id:'e4',title:'看故事书',en:'Story time',emoji:'📖',status:'next'},
         {id:'e5',title:'睡觉',en:'Sleep',emoji:'🌙',status:'next'}]}
     };
+    const FIRST_PRESETS = {
+      school:[{id:'write',title:'写字',en:'Writing',emoji:'✏️'},{id:'play',title:'玩一会儿',en:'Play time',emoji:'🧩'}],
+      brush:[{id:'brush',title:'刷牙',en:'Brush teeth',emoji:'🪥'},{id:'snack',title:'吃点心',en:'Snack time',emoji:'🍎'}],
+      tidy:[{id:'tidy',title:'收玩具',en:'Tidy toys',emoji:'🧸'},{id:'play',title:'玩喜欢的游戏',en:'Favourite play',emoji:'🪁'}]
+    };
     const DEFAULT_CHOICES = [{title:'玩沙坑',en:'Sandpit',emoji:'🌋'},{title:'做松饼',en:'Bake muffins',emoji:'🧁'}];
     function clone(v) { return JSON.parse(JSON.stringify(v)); }
-    function defaults() { return {v:2,scene:'morning',scenes:clone(DEFAULT_SCENES),targetIds:DEFAULT_TARGETS.slice(),showPinyin:false,showChinese:true,speech:'en',circleMode:false,photos:[],stories:[],choices:clone(DEFAULT_CHOICES)}; }
+    function defaults() { return {v:2,scene:'morning',scenes:clone(DEFAULT_SCENES),targetIds:DEFAULT_TARGETS.slice(),showPinyin:false,showChinese:true,speech:'en',circleMode:false,firstPreset:'routine',photos:[],stories:[],choices:clone(DEFAULT_CHOICES)}; }
     function load() { try { const v=JSON.parse(localStorage.getItem(KEY)); if(v && v.v===2 && v.scenes) return Object.assign(defaults(),v); } catch(e) {} return defaults(); }
     let data=load(), tab='routine', corePage=0, phrase=[], picked=-1, uploadContext=null, timerTotal=120, timerLeft=120, timerRunning=false, timerTick=null, drag=null, toastTimer=null;
     const root=document.getElementById('main'), nav=document.getElementById('nav');
@@ -395,7 +442,7 @@
       else nativeSpeak(phrase.map(w=>w.en).join(' '),phrase.map(w=>w.zh).join(' '),phrase.length===1?'core/'+phrase[0].id:null);
     }
     function currentScene() { return data.scenes[data.scene] || Object.values(data.scenes)[0]; }
-    function focusPair() { const cards=currentScene().cards;return [cards.find(x=>x.status==='now')||null,cards.find(x=>x.status==='next')||null]; }
+    function focusPair() { const todos=currentScene().cards.filter(c=>c.status!=='done');return [todos[0]||null,todos[1]||null]; }
     function subtitle(title,description,emoji,titleEn,descEn) { return '<section class="intro"><div><p class="eyebrow">QIXUN · VISUAL SUPPORT</p><h2>'+bi(title,titleEn,'bi-start')+'</h2><p>'+esc(description)+'</p><p class="desc-en" lang="en">'+esc(descEn)+'</p></div><div class="hero-emoji" aria-hidden="true">'+emoji+'</div></section>'; }
     function setTab(t) { if(t==='core'&&tab!=='core')corePage=0;tab=t; render(); window.scrollTo({top:0,behavior:'smooth'}); }
     function setCorePage(which) {
@@ -419,38 +466,38 @@
     }
     function changeScene(id) { if(!data.scenes[id])return;data.scene=id;save();render(); }
     function taskCard(c) {
-      const action=c.status==='done'?['↩ 放回待做','Move back']:c.status==='next'?['▶ 现在做','Do now']:['✓ 完成','Done'];
+      const action=c.status==='done'?['↩ 放回待做','Move back']:['✓ 做完了','Mark done'];
       return '<article class="task-card" data-card="'+esc(c.id)+'"><div class="task-main" data-advance="'+esc(c.id)+'" role="button" tabindex="0" aria-label="'+esc(c.title)+' / '+esc(c.en||'')+'，点击推进 / Tap to advance"><div class="task-symbol" aria-hidden="true">'+esc(c.emoji)+'</div><div><div class="task-title">'+esc(c.title)+'</div><div class="task-en">'+esc(c.en||'English label not set')+'</div></div></div><div class="task-actions"><button class="mini-btn primary" data-advance="'+esc(c.id)+'">'+bi(action[0],action[1])+'</button><button class="mini-btn" data-say="'+esc(c.id)+'">'+bi('🔊 朗读','Speak')+'</button><button class="mini-btn" data-edit="'+esc(c.id)+'">'+bi('✎ 编辑','Edit')+'</button><button class="mini-btn drag-handle" data-drag="'+esc(c.id)+'" aria-label="拖动 / Drag '+esc(c.title)+'">'+bi('⠿ 拖动','Drag')+'</button><button class="mini-btn danger" data-remove="'+esc(c.id)+'" aria-label="删除 / Delete '+esc(c.title)+'">'+bi('✕ 删除','Delete')+'</button></div></article>';
     }
     function renderRoutine() {
       const pair=focusPair();
       function tile(c,label,klass) { return '<div class="focus-tile '+klass+'"><div class="focus-symbol">'+(c?esc(c.emoji):'✨')+'</div><div><div class="focus-label">'+label+'</div><div class="focus-title">'+(c?esc(c.title):'可以休息啦')+'</div><div class="focus-en">'+(c?esc(c.en||'English label not set'):'All done')+'</div></div></div>'; }
-      const lanes=[['now','现在 NOW','🍃'],['next','等待 / 接下来 WAIT','☀️'],['done','做过了 DONE','⭐']];
-      root.innerHTML=subtitle('今天，一步一步来','每张卡代表一件事。点卡片向前推进，也可以按住「拖动」跨列移动。','🛝','One step at a time','Each card is one activity. Tap to advance or hold Drag to move between columns.')+sceneButtons()+
+      const lanes=[['todo','待做任务 · TO DO','🍃'],['done','已完成 · DONE','⭐']];
+      root.innerHTML=subtitle('今天，一步一步来','左边是待做，右边是完成。左边第一项高亮显示现在做的事。','🛝','One step at a time','Left: To do. Right: Done. The first item is highlighted as Now.')+sceneButtons()+
         '<div class="section-label"><h3>👀 '+bi('现在看这里','Focus on these steps','bi-start')+'</h3><small>'+bi('可切换大卡片','Also available as large First / Then cards','bi-start')+'</small></div><div class="focus-strip">'+tile(pair[0],'先做 FIRST','')+tile(pair[1],'然后 THEN','then')+'</div>'+
         '<div class="section-label"><h3>🗂️ '+bi('我的 Trello 看板','My Trello-style board','bi-start')+'</h3><small>'+bi('点卡推进 · 拖动排序','Tap to advance · Drag to reorder','bi-start')+'</small></div><div class="board">'+lanes.map(l=>{
-          const cards=currentScene().cards.filter(c=>c.status===l[0]);
-          return '<section class="lane" data-status="'+l[0]+'"><div class="lane-head"><span><span class="lane-dot"></span>'+l[1]+'</span><span class="count">'+cards.length+'</span></div>'+ (cards.length?cards.map(taskCard).join(''):'<div class="empty">把卡片拖到这里<br>Drag a card here<br>或点卡片推进 / Or tap to advance</div>')+'</section>';
+          const cards=currentScene().cards.filter(c=>l[0]==='done'?c.status==='done':c.status!=='done');
+          return '<section class="lane" data-status="'+l[0]+'"><div class="lane-head"><span><span class="lane-dot"></span>'+l[1]+'</span><span class="count">'+cards.length+'</span></div>'+ (cards.length?cards.map((c,i)=>'<div class="'+(l[0]==='todo'&&i===0?'now-card':'')+'">'+(l[0]==='todo'&&i===0?'<div class="now-banner">▶ 现在做 · NOW</div>':'')+taskCard(c)+'</div>').join(''):'<div class="empty">把卡片拖到这里<br>Drag a card here<br>或点卡片推进 / Or tap to advance</div>')+'</section>';
         }).join('')+'</div>';
     }
     function renderCore() {
       const chosen=phrase.map(w=>'<button class="word-chip" title="点击删除 / Tap to remove" data-unword="'+esc(w.id)+'">'+esc(w.en)+' ×</button>').join('');
       const displayed=CORE.filter(w=>{const c=Number(w.id.split('-')[1]);return corePage===2||corePage===0&&c<6||corePage===1&&c>=6;});
-      const cells=displayed.map(w=>'<button class="core-cell '+w.color+' '+(data.targetIds.includes(w.id)?'target ':'')+(data.circleMode?'circle-edit':'')+'" data-core="'+w.id+'" aria-label="'+esc(w.en+', '+w.zh+(data.targetIds.includes(w.id)?'，本周示范词':''))+'"><span class="core-en">'+esc(w.en)+'</span><span class="core-icon" aria-hidden="true">'+w.emoji+'</span>'+(data.showChinese?'<span class="core-zh">'+esc(w.zh)+'</span>':'')+(data.showPinyin?'<span class="core-py">'+esc(w.py)+'</span>':'')+'</button>').join('');
+      const cells=displayed.map(w=>'<button class="core-cell '+w.color+' '+(data.targetIds.includes(w.id)?'target ':'')+(data.circleMode?'circle-edit':'')+'" data-core="'+w.id+'" aria-label="'+esc(w.en+', '+w.zh+(data.targetIds.includes(w.id)?'，本周示范词':''))+'"><span class="core-en">'+esc(w.en)+'</span><span class="core-icon" aria-hidden="true">'+window.QixunIcons.render(w.id,esc(w.emoji))+'</span>'+(data.showChinese?'<span class="core-zh">'+esc(w.zh)+'</span>':'')+(data.showPinyin?'<span class="core-py">'+esc(w.py)+'</span>':'')+'</button>').join('');
       const pager='<div class="core-pager" aria-label="沟通词板翻页 / Coreboard pages"><button data-core-page="prev" '+(corePage===0?'disabled':'')+'>'+bi('← 上一页','Previous')+'</button><button data-core-page="0" aria-current="'+(corePage===0?'page':'false')+'">'+bi('第 1 页 · 左边','Page 1 · Left')+'</button><button data-core-page="1" aria-current="'+(corePage===1?'page':'false')+'">'+bi('第 2 页 · 右边','Page 2 · Right')+'</button><button data-core-page="2" aria-current="'+(corePage===2?'page':'false')+'">'+bi('整张纸板','Full board')+'</button><button data-core-page="next" '+(corePage===2?'disabled':'')+'>'+bi('下一页 →','Next →')+'</button></div>';
       root.innerHTML=subtitle('跟纸质板一样的位置','分左右两页，也可切到「整张纸板」核对原来 7 × 11 的位置。','💬','Same places as the printed board','View the left and right halves, or show all 77 words together in the original 7 × 11 order.')+
         '<div class="core-intro"><strong>给大人 / For adults:</strong> 边指边说，一次示范一个或两个有用的词。不要测试、催促或抓着孩子的手去指。<div lang="en" class="hint" style="font-size:14px;margin-top:6px">Point and say one or two useful words. No testing, repeated prompting, hand-over-hand guidance or withholding activities.</div>'+(data.circleMode?' <strong>⭕ 圈词编辑已打开 / Target editing is on: tap a word to highlight it.</strong>':'')+'</div>'+
         '<div class="composer"><div><div style="font-size:13px;color:#b7e1d5;font-weight:900">一起说 · OUR WORDS</div><div class="words">'+(chosen||'<span style="color:#c8e0db">点一个词，慢慢组成短句…<br><span lang="en">Tap words to build a short phrase…</span></span>')+'</div></div><div class="composer-actions"><button class="mini-btn primary" data-core-action="speak">'+bi('🔊 读出来','Speak phrase')+'</button><button class="mini-btn" data-core-action="clear">'+bi('清空','Clear')+'</button></div></div>'+
-        pager+
+        pager+'<div class="print-actions"><button class="subtle-btn" data-core-action="print">'+bi('🖨️ 打印学校完整版','Print full school board (A3)')+'</button><a class="subtle-btn" style="text-decoration:none" href="./print/qixun-coreboard-school-a3.pdf" target="_blank" rel="noopener">'+bi('⬇ 打开学校 PDF','Open school PDF')+'</a></div>'+
         '<div class="core-scroll" role="region" aria-label="核心词板 / Core word board · '+(corePage===2?'Full board':'Page '+(corePage+1))+'" tabindex="0"><div class="core-grid '+(corePage===2?'full':'paged '+(corePage===1?'right':''))+'">'+cells+'</div><div class="numbers '+(corePage===2?'full':'')+'">'+[['yes','是','✅'],['1','一','1'],['2','二','2'],['3','三','3'],['4','四','4'],['5','五','5'],['no','不','❌']].map(n=>'<button class="number-btn '+(n[0]==='yes'?'yes':n[0]==='no'?'no':'')+'" data-number="'+n[0]+'" data-zh="'+n[1]+'">'+n[2]+'<span class="number-label">'+(n[0]==='yes'?'是 / Yes':n[0]==='no'?'不 / No':'')+'</span></button>').join('')+'</div></div>'+
         pager+
         '<div class="quick-phrases"><span class="hint">'+bi('可以直接示范','Quick phrases','bi-start')+'</span>'+[['My turn','轮到我','my-turn'],['Your turn','轮到你','your-turn'],['Go wash','去洗','go-wash'],["Don't flush it",'不要冲水','dont-flush'],['Make muffins','做松饼','make-muffins'],['Too big','太大了','too-big']].map(x=>'<button data-phrase="'+esc(x[0])+'" data-zh="'+esc(x[1])+'" data-audio="'+x[2]+'">'+bi(x[1],x[0])+'</button>').join('')+'</div><p class="hint">💡 左右两页保留原纸板每一行的词序，整张板保留完整位置。图标是数字版提示，不是纸板原插画。<br><span lang="en">Each half keeps the printed word order. Full board shows the original layout. Symbols are digital alternatives to the printed illustrations.</span></p>';
     }
     function renderFirst() {
-      const pair=focusPair();
-      function step(c,label) { return '<div class="big-step"><span class="focus-label">'+label+'</span><span class="big-emoji">'+(c?esc(c.emoji):'✨')+'</span><strong>'+esc(c?c.title:'完成啦')+'</strong><small>'+esc(c?(c.en||'English label not set'):'All done')+'</small>'+(c?'<button class="mini-btn" style="margin-top:14px" data-say="'+esc(c.id)+'">'+bi('🔊 听一听','Listen')+'</button>':'')+'</div>'; }
-      root.innerHTML=subtitle('先做这个，再做那个','只显示两个步骤，用短句配合手势。流程从今天的看板同步。','🌈','First, then…','Two large steps, short phrases and gestures. These steps follow the daily routine board.')+
-        sceneButtons()+
+      const pair=data.firstPreset==='routine'?focusPair():(FIRST_PRESETS[data.firstPreset]||FIRST_PRESETS.school);
+      function step(c,label) { return '<div class="big-step"><span class="focus-label">'+label+'</span><span class="big-emoji">'+(c?esc(c.emoji):'✨')+'</span><strong>'+esc(c?c.title:'完成啦')+'</strong><small>'+esc(c?(c.en||'English label not set'):'All done')+'</small>'+(c?'<button class="mini-btn" style="margin-top:14px" data-first-say="'+esc(c.id)+'">'+bi('🔊 听一听','Listen')+'</button>':'')+'</div>'; }
+      root.innerHTML=subtitle('先做这个，再做那个','先完成较难的任务，再进行喜欢的活动。可选学校或家庭例子。','🌈','First, then…','First a less preferred task, then a favourite activity. Choose a school or home example.')+
+        '<div class="first-presets">'+[['routine','当前流程','Current routine'],['school','学校：写字 → 玩','School: write → play'],['brush','家庭：刷牙 → 点心','Home: brush → snack'],['tidy','家庭：收玩具 → 玩','Home: tidy → play']].map(x=>'<button class="pill '+(data.firstPreset===x[0]?'active':'')+'" data-first-preset="'+x[0]+'">'+bi(x[1],x[2])+'</button>').join('')+'</div>'+
         '<div class="firstthen">'+step(pair[0],'1 · 先做 FIRST')+step(pair[1],'2 · 然后 THEN')+'</div>'+
         '<div class="timer-card"><div class="timer-ring" id="timer-ring"><div class="timer-inner"><div><strong id="timer-time">02:00</strong><div class="hint">'+bi('看得见的时间','Visual time')+'</div></div></div></div><div><h3 style="margin:0">⏲️ '+bi('温柔的计时器','Gentle timer')+'</h3><p class="hint">时间只帮助预告变化，不会锁住下一步，也不要求点词板。<br><span lang="en">The timer previews changes. It never locks a step or requires a word-board response.</span></p><div class="timer-control"><button data-minutes="2">'+bi('2 分钟','2 minutes')+'</button><button data-minutes="5">'+bi('5 分钟','5 minutes')+'</button><button data-minutes="10">'+bi('10 分钟','10 minutes')+'</button></div><div class="timer-control"><button class="primary" id="timer-start">'+(timerRunning?bi('暂停','Pause'):bi('开始','Start'))+'</button><button id="timer-reset">'+bi('重来','Reset')+'</button></div></div></div>';
       updateTimerUI();
@@ -464,7 +511,7 @@
       const isAccess=kind==='access', items=isAccess?data.photos:data.stories;
       root.innerHTML=subtitle(isAccess?'什么可以用，什么暂时不能用':'把熟悉的照片排成故事',isAccess?'给真实照片贴上「可以用」或「暂时不能用」标签，由大人决定。':'在活动变化前，一起看熟悉的照片和简短说明。',isAccess?'📷':'📖',isAccess?'Available or not available?':'Our photo stories',isAccess?'Label real photos as available or not available. An adult confirms each label.':'Look at familiar photos together before events or changes in routine.')+
         '<div class="grid-tools"><p class="hint">'+(isAccess?'请根据实际情况和老师的安排添加。<br><span lang="en">Only add availability labels based on the real situation and teacher guidance.</span>':'照片按添加顺序展示，可以反复看。<br><span lang="en">Photos appear in order and can be revisited together.</span>')+'</p><button class="subtle-btn" data-action="'+(isAccess?'add-access':'add-story')+'">'+bi('＋ 添加真实照片','Add a real photo')+'</button></div>'+
-        (items.length?'<div class="'+(isAccess?'photo-grid':'story-list')+'">'+items.map((p,i)=>'<article class="photo-card">'+(p.image?'<img class="photo-img" src="'+esc(p.image)+'" alt="'+esc(p.title)+' / '+esc(p.en||'photo')+'">':'<div class="photo-placeholder">📸</div>')+'<div class="photo-meta"><div class="photo-title">'+esc(p.title)+'</div><div class="task-en">'+esc(p.en||'English label not set')+'</div>'+(!isAccess&&p.caption?'<p class="hint">'+esc(p.caption)+'<br><span lang="en">'+esc(p.captionEn||'English description not set')+'</span></p>':'')+(isAccess?'<div class="photo-label '+(p.allowed?'':'nope')+'">'+(p.allowed?bi('✅ 可以用','Available'):bi('⛔ 暂时不能用','Not available'))+'</div>':'<div class="hint">'+bi('第 '+(i+1)+' 张','Photo '+(i+1))+'</div>')+'<div class="photo-actions"><button class="mini-btn" data-photo-say="'+kind+':'+i+'">'+bi('🔊 朗读','Speak')+'</button>'+(isAccess?'<button class="mini-btn" data-photo-toggle="'+i+'">'+bi('⇄ 切换标签','Change label')+'</button>':'')+'<button class="mini-btn" data-photo-edit="'+kind+':'+i+'">'+bi('✎ 编辑','Edit')+'</button><button class="mini-btn danger" data-photo-delete="'+kind+':'+i+'">'+bi('删除','Delete')+'</button></div></div></article>').join('')+'</div>':'<div class="empty" style="min-height:260px"><div><div style="font-size:72px">📸</div><strong>还没有照片 / No photos yet</strong><br>从 iPad 相册选择或用相机拍一张。<br><span lang="en">Tap Add a real photo to choose or take a picture.</span><br>照片只留在本机 / Photos stay on this device.</div></div>');
+        (items.length?'<div class="'+(isAccess?'photo-grid':'story-list')+'">'+items.map((p,i)=>'<article class="photo-card">'+(p.image?'<img class="photo-img" src="'+esc(p.image)+'" alt="'+esc(p.title)+' / '+esc(p.en||'photo')+'">':'<div class="photo-placeholder">📸</div>')+(isAccess?'<div class="availability-emblem '+(p.allowed?'yes':'no')+'" aria-label="'+(p.allowed?'Available':'Not available')+'">'+(p.allowed?'✓':'╱')+'</div>':'')+'<div class="photo-meta"><div class="photo-title">'+esc(p.title)+'</div><div class="task-en">'+esc(p.en||'English label not set')+'</div>'+(!isAccess&&p.caption?'<p class="hint">'+esc(p.caption)+'<br><span lang="en">'+esc(p.captionEn||'English description not set')+'</span></p>':'')+(isAccess?'<div class="photo-label '+(p.allowed?'':'nope')+'">'+(p.allowed?bi('✅ 可以用','Available'):bi('⛔ 暂时不能用','Not available'))+'</div>':'<div class="hint">'+bi('第 '+(i+1)+' 张','Photo '+(i+1))+'</div>')+'<div class="photo-actions"><button class="mini-btn" data-photo-say="'+kind+':'+i+'">'+bi('🔊 朗读','Speak')+'</button>'+(isAccess?'<button class="mini-btn" data-photo-toggle="'+i+'">'+bi('⇄ 切换标签','Change label')+'</button>':'')+'<button class="mini-btn" data-photo-edit="'+kind+':'+i+'">'+bi('✎ 编辑','Edit')+'</button><button class="mini-btn danger" data-photo-delete="'+kind+':'+i+'">'+bi('删除','Delete')+'</button></div></div></article>').join('')+'</div>':'<div class="empty" style="min-height:260px"><div><div style="font-size:72px">📸</div><strong>还没有照片 / No photos yet</strong><br>从 iPad 相册选择或用相机拍一张。<br><span lang="en">Tap Add a real photo to choose or take a picture.</span><br>照片只留在本机 / Photos stay on this device.</div></div>');
     }
     function render() { renderNav(); if(tab==='routine')renderRoutine();else if(tab==='core')renderCore();else if(tab==='first')renderFirst();else if(tab==='choices')renderChoices();else if(tab==='access')renderPhotos('access');else renderPhotos('story');renderModulePager(); }
     function findCard(id) { return currentScene().cards.find(c=>c.id===id); }
@@ -475,17 +522,14 @@
         const at=cards.findIndex(c=>c.id===beforeId);
         cards.splice(at>=0?at:cards.length,0,card);
       }
-      card.status=status;
-      if(status==='now') cards.forEach(c=>{if(c.id!==id&&c.status==='now')c.status='next';});
-      if(status==='done' && !cards.some(c=>c.status==='now')) { const n=cards.find(c=>c.status==='next');if(n)n.status='now'; }
+      card.status=status==='done'?'done':'next';
       save();render();
     }
-    function advance(id) { const c=findCard(id);if(!c)return;moveCard(id,c.status==='now'?'done':c.status==='next'?'now':'next'); }
+    function advance(id) { const c=findCard(id);if(!c)return;moveCard(id,c.status==='done'?'todo':'done'); }
     function removeTask(id) {
       const cards=currentScene().cards,c=findCard(id);
       if(!c||!confirm('删除「'+c.title+'」这张流程卡？\nDelete this routine card: '+(c.en||c.title)+'?'))return;
       cards.splice(cards.indexOf(c),1);
-      if(!cards.some(x=>x.status==='now')){const n=cards.find(x=>x.status==='next');if(n)n.status='now';}
       save();render();
     }
     function editTask(id) {
@@ -583,9 +627,11 @@
     }
     function setTimer(minutes) {timerPause();timerTotal=minutes*60;timerLeft=timerTotal;renderFirst();}
     function delegatedClick(e) {
-      const b=e.target.closest('[data-scene],[data-action],[data-advance],[data-edit],[data-remove],[data-say],[data-core],[data-core-page],[data-core-action],[data-number],[data-unword],[data-phrase],[data-choice],[data-minutes],[data-photo-say],[data-photo-toggle],[data-photo-edit],[data-photo-delete]');
+      const b=e.target.closest('[data-scene],[data-action],[data-advance],[data-edit],[data-remove],[data-say],[data-core],[data-core-page],[data-core-action],[data-number],[data-unword],[data-phrase],[data-choice],[data-minutes],[data-photo-say],[data-photo-toggle],[data-photo-edit],[data-photo-delete],[data-first-preset],[data-first-say]');
       if(!b)return;
       if(b.dataset.scene)return changeScene(b.dataset.scene);
+      if(b.dataset.firstPreset){data.firstPreset=b.dataset.firstPreset;save();renderFirst();return;}
+      if(b.dataset.firstSay){if(data.firstPreset==='routine'){const c=findCard(b.dataset.firstSay);if(c)speakTask(c);}else{const c=(FIRST_PRESETS[data.firstPreset]||[]).find(x=>x.id===b.dataset.firstSay);if(c)speak(c.en,c.title,'first/'+c.id);}return;}
       if(b.dataset.advance)return advance(b.dataset.advance);
       if(b.dataset.edit)return editTask(b.dataset.edit);
       if(b.dataset.remove)return removeTask(b.dataset.remove);
@@ -597,6 +643,7 @@
         phrase.push(w);speak(w.en,w.zh,'core/'+w.id);renderCore();return;
       }
       if(b.dataset.coreAction==='clear'){phrase=[];renderCore();return;}
+      if(b.dataset.coreAction==='print'){corePage=2;renderCore();setTimeout(()=>window.print(),150);return;}
       if(b.dataset.coreAction==='speak'){speakCorePhrase();return;}
       if(b.dataset.unword){const i=phrase.findIndex(w=>w.id===b.dataset.unword);if(i>=0)phrase.splice(i,1);renderCore();return;}
       if(b.dataset.number){speak(b.dataset.number,b.dataset.zh,'number/'+b.dataset.number);return;}

@@ -1,11 +1,11 @@
-const CACHE = 'qixun-coreboard-v2-20261126-games-1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './games/', './games/index.html', '../icon-192.png', '../icon-512.png'];
+const CACHE = 'qixun-coreboard-v2-20261127-therapist-piper-2';
+const FILES = ['./', './index.html', './manifest.webmanifest', './games/', './games/index.html', './icons.js', './print/qixun-coreboard-school-a3.pdf', '../icon-192.png', '../icon-512.png'];
 const audioFiles = [
   ...Array.from({length:7},(_,r)=>Array.from({length:11},(_,c)=>'./audio/core/'+r+'-'+c+'.mp3')).flat(),
   ...'m1 m2 m3 m4 m5 s1 s2 s3 s4 s5 p1 p2 p3 p4 p5 e1 e2 e3 e4 e5'.split(' ').map(id=>'./audio/task/'+id+'.mp3'),
   ...'yes 1 2 3 4 5 no'.split(' ').map(id=>'./audio/number/'+id+'.mp3'),
   ...'my-turn your-turn go-wash dont-flush make-muffins too-big hello'.split(' ').map(id=>'./audio/phrase/'+id+'.mp3'),
-  './audio/choice/0.mp3','./audio/choice/1.mp3'
+  './audio/choice/0.mp3','./audio/choice/1.mp3', ...'write play brush snack tidy'.split(' ').map(id=>'./audio/first/'+id+'.mp3')
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(async cache => {
