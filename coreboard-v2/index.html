@@ -10,6 +10,7 @@
   <meta name="description" content="启洵的纸质词板对位沟通工具与 Trello 式视觉日程。">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="../icon-192.png">
+  <link rel="icon" type="image/png" href="../icon-192.png">
   <title>启洵的 Coreboard · 视觉沟通与流程看板</title>
   <style>
     :root { --ink:#213c44; --muted:#66818a; --teal:#236d71; --teal-light:#d7eeea; --paper:#f7f5ef; --white:#fff; --line:#d8e2de; --sun:#f8d97d; --salmon:#f0b39d; --blue:#d2eaf7; --green:#d8edce; --pink:#f6d8e8; --purple:#e3ddfb; --shadow:0 9px 24px rgba(31,70,70,.09); }
@@ -213,7 +214,11 @@
     .lane[data-status="todo"]{background:#e1f0eb}
     .lane[data-status="done"]{background:#f1f0e8}
     .now-card{border:4px solid #237b78;border-radius:20px;padding:5px;background:#d8f3e8;margin-bottom:10px}
-    .now-card .task-card{margin-bottom:0}
+    .now-card .task-card{margin-bottom:0;min-height:215px;background:#fff}
+    .now-card .task-main{min-height:111px;gap:16px}
+    .now-card .task-symbol{font-size:56px;flex-basis:82px;width:82px;height:82px;background:#dbf3e8}
+    .now-card .task-title{font-size:clamp(24px,2.55vw,30px)}
+    .now-card .task-en{font-size:clamp(19px,2.1vw,23px);color:#315861}
     .now-banner{color:#165b59;font-weight:950;font-size:19px;padding:7px 10px}
     .core-icon{font-size:54px;line-height:1.12;width:100%;height:74px;display:flex;align-items:center;justify-content:center}
     .core-icon svg{display:block;width:min(98%,120px);height:100%;max-height:78px}
@@ -221,6 +226,16 @@
     .core-grid.paged .core-cell{min-height:164px}
     .core-grid.paged .core-icon{font-size:64px;height:91px}
     .core-grid.paged .core-icon svg{width:min(98%,140px);max-height:93px}
+    /* Full 11-column reference view must fit iPad width; the 6/5-column pages remain the large-touch AAC mode. */
+    .core-grid.full{min-width:0;gap:1px;padding:2px}
+    .core-grid.full .core-cell{padding:6px 2px;gap:3px;min-height:125px}
+    .core-grid.full .core-en{font-size:clamp(10px,1.25vw,17px);line-height:1.13}
+    .core-grid.full .core-zh{font-size:clamp(10px,1.1vw,14px);line-height:1.1}
+    .core-grid.full .core-py{font-size:clamp(9px,0.9vw,12px)}
+    .core-grid.full .core-icon{font-size:clamp(25px,3.2vw,49px);height:clamp(37px,5vw,65px)}
+    .core-grid.full .core-icon svg{max-width:98%;max-height:100%}
+    .numbers.full{min-width:0}
+    .numbers.full .number-btn{min-width:0;flex:1 1 0;max-width:72px}
     .first-presets{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 20px}
     .first-presets .pill{min-height:66px;font-size:16px}
     .print-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:7px 0 13px}
@@ -228,7 +243,19 @@
     .availability-emblem{position:absolute;right:14px;top:14px;border-radius:50%;height:73px;width:73px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.94);border:7px solid #24976c;color:#24976c;font-size:48px;font-weight:950;box-shadow:0 5px 14px #2637}
     .availability-emblem.no{border-color:#c43837;color:#c43837}
     .availability-emblem.no:after{content:"";position:absolute;width:58px;height:8px;background:#c43837;border-radius:8px;transform:rotate(-43deg)}
-    @media(max-width:760px){.board{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.lane{padding:7px}.task-card{padding:9px}.task-title{font-size:16px}.task-en{font-size:15px}.now-banner{font-size:14px}.core-cell{min-height:128px}.core-grid.paged .core-cell{min-height:145px}.core-grid.paged .core-icon{font-size:55px;height:75px}}
+    @media(max-width:760px){
+      .board{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+      .lane{padding:7px}.task-card{padding:9px}.task-title{font-size:16px}.task-en{font-size:15px}
+      .now-banner{font-size:14px}
+      .now-card .task-card{min-height:175px}
+      .now-card .task-main{min-height:95px;gap:7px}
+      .now-card .task-symbol{font-size:42px;flex-basis:54px;width:54px;height:54px}
+      .now-card .task-title{font-size:21px}
+      .now-card .task-en{font-size:17px}
+      .core-cell{min-height:128px}
+      .core-grid.paged .core-cell{min-height:145px}
+      .core-grid.paged .core-icon{font-size:55px;height:75px}
+    }
     @page{size:A3 landscape;margin:7mm}
     @media print{
       html,body{background:white!important;color:#172f39!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -244,6 +271,7 @@
       .core-grid.full .core-en{font-size:13px!important;line-height:1.07;word-break:break-word}
       .core-grid.full .core-zh{font-size:11px!important}
       .core-grid.full .core-py{display:none!important}
+      .core-grid.full .core-cell.target{box-shadow:none!important}
       .core-grid.full .core-cell.target:after{display:none}
       .numbers.full{min-width:0!important;padding:6px}
       .number-btn{min-height:49px;min-width:57px;font-size:18px}
@@ -261,7 +289,7 @@
     <main id="main" aria-live="off"></main>
     <div class="module-pager" id="module-pager" aria-label="功能页面翻页 / Section navigation"></div>
     <div class="audio-status" id="audio-status" role="status" aria-live="polite"></div>
-    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.4<br>Saved on this device · Home and school use</span></footer>
+    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.5<br>Saved on this device · Home and school use</span></footer>
   </div>
   <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="大人设置 / Adult settings">
     <div class="settings-panel">
@@ -350,12 +378,26 @@
     const FIRST_PRESETS = {
       school:[{id:'write',title:'写字',en:'Writing',emoji:'✏️'},{id:'play',title:'玩一会儿',en:'Play time',emoji:'🧩'}],
       brush:[{id:'brush',title:'刷牙',en:'Brush teeth',emoji:'🪥'},{id:'snack',title:'吃点心',en:'Snack time',emoji:'🍎'}],
-      tidy:[{id:'tidy',title:'收玩具',en:'Tidy toys',emoji:'🧸'},{id:'play',title:'玩喜欢的游戏',en:'Favourite play',emoji:'🪁'}]
+      tidy:[{id:'tidy',title:'收玩具',en:'Tidy toys',emoji:'🧸'},{id:'play-favourite',title:'玩喜欢的游戏',en:'Favourite play',emoji:'🪁'}]
     };
     const DEFAULT_CHOICES = [{title:'玩沙坑',en:'Sandpit',emoji:'🌋'},{title:'做松饼',en:'Bake muffins',emoji:'🧁'}];
     function clone(v) { return JSON.parse(JSON.stringify(v)); }
-    function defaults() { return {v:2,scene:'morning',scenes:clone(DEFAULT_SCENES),targetIds:DEFAULT_TARGETS.slice(),showPinyin:false,showChinese:true,speech:'en',circleMode:false,firstPreset:'routine',photos:[],stories:[],choices:clone(DEFAULT_CHOICES)}; }
-    function load() { try { const v=JSON.parse(localStorage.getItem(KEY)); if(v && v.v===2 && v.scenes) return Object.assign(defaults(),v); } catch(e) {} return defaults(); }
+    function defaults() { return {v:2,scene:'morning',scenes:clone(DEFAULT_SCENES),targetIds:DEFAULT_TARGETS.slice(),showPinyin:false,showChinese:true,speech:'en',circleMode:false,firstPreset:'routine',routineTwoColumnMigration:true,photos:[],stories:[],choices:clone(DEFAULT_CHOICES)}; }
+    // One-time migration: keep the child's original "now" card first, without losing any completed cards.
+    // After migration the top To-do card determines Now, so dragging a card to the top intentionally changes it.
+    function migrateLegacyOrder(v) {
+      if(v.routineTwoColumnMigration)return v;
+      Object.values(v.scenes||{}).forEach(scene=>{
+        if(!Array.isArray(scene.cards))return;
+        const oldNow=scene.cards.find(c=>c.status==='now');
+        if(!oldNow)return;
+        const ix=scene.cards.indexOf(oldNow);
+        if(ix>0){scene.cards.splice(ix,1);scene.cards.unshift(oldNow);}
+      });
+      v.routineTwoColumnMigration=true;
+      return v;
+    }
+    function load() { try { const v=JSON.parse(localStorage.getItem(KEY)); if(v && v.v===2 && v.scenes) return Object.assign(defaults(),migrateLegacyOrder(v)); } catch(e) {} return defaults(); }
     let data=load(), tab='routine', corePage=0, phrase=[], picked=-1, uploadContext=null, timerTotal=120, timerLeft=120, timerRunning=false, timerTick=null, drag=null, toastTimer=null;
     const root=document.getElementById('main'), nav=document.getElementById('nav');
     const $=id => document.getElementById(id);
@@ -471,7 +513,12 @@
     }
     function renderRoutine() {
       const pair=focusPair();
-      function tile(c,label,klass) { return '<div class="focus-tile '+klass+'"><div class="focus-symbol">'+(c?esc(c.emoji):'✨')+'</div><div><div class="focus-label">'+label+'</div><div class="focus-title">'+(c?esc(c.title):'可以休息啦')+'</div><div class="focus-en">'+(c?esc(c.en||'English label not set'):'All done')+'</div></div></div>'; }
+      function tile(c,label,klass) {
+        const isThen=klass==='then';
+        const emptyZh=isThen?(pair[0]?'选一个喜欢的活动':'休息一下'):'全部完成';
+        const emptyEn=isThen?(pair[0]?'Choose a favourite activity':'Take a break'):'All done';
+        return '<div class="focus-tile '+klass+'"><div class="focus-symbol">'+(c?esc(c.emoji):isThen?'🎈':'✅')+'</div><div><div class="focus-label">'+label+'</div><div class="focus-title">'+(c?esc(c.title):emptyZh)+'</div><div class="focus-en">'+(c?esc(c.en||'English label not set'):emptyEn)+'</div></div></div>';
+      }
       const lanes=[['todo','待做任务 · TO DO','🍃'],['done','已完成 · DONE','⭐']];
       root.innerHTML=subtitle('今天，一步一步来','左边是待做，右边是完成。左边第一项高亮显示现在做的事。','🛝','One step at a time','Left: To do. Right: Done. The first item is highlighted as Now.')+sceneButtons()+
         '<div class="section-label"><h3>👀 '+bi('现在看这里','Focus on these steps','bi-start')+'</h3><small>'+bi('可切换大卡片','Also available as large First / Then cards','bi-start')+'</small></div><div class="focus-strip">'+tile(pair[0],'先做 FIRST','')+tile(pair[1],'然后 THEN','then')+'</div>'+
@@ -495,7 +542,12 @@
     }
     function renderFirst() {
       const pair=data.firstPreset==='routine'?focusPair():(FIRST_PRESETS[data.firstPreset]||FIRST_PRESETS.school);
-      function step(c,label) { return '<div class="big-step"><span class="focus-label">'+label+'</span><span class="big-emoji">'+(c?esc(c.emoji):'✨')+'</span><strong>'+esc(c?c.title:'完成啦')+'</strong><small>'+esc(c?(c.en||'English label not set'):'All done')+'</small>'+(c?'<button class="mini-btn" style="margin-top:14px" data-first-say="'+esc(c.id)+'">'+bi('🔊 听一听','Listen')+'</button>':'')+'</div>'; }
+      function step(c,label) {
+        const isThen=label.startsWith('2');
+        const emptyZh=isThen?(pair[0]?'选一个喜欢的活动':'休息一下'):'全部完成';
+        const emptyEn=isThen?(pair[0]?'Choose a favourite activity':'Take a break'):'All done';
+        return '<div class="big-step"><span class="focus-label">'+label+'</span><span class="big-emoji">'+(c?esc(c.emoji):isThen?'🎈':'✅')+'</span><strong>'+esc(c?c.title:emptyZh)+'</strong><small>'+esc(c?(c.en||'English label not set'):emptyEn)+'</small>'+(c?'<button class="mini-btn" style="margin-top:14px" data-first-say="'+esc(c.id)+'">'+bi('🔊 听一听','Listen')+'</button>':'')+'</div>';
+      }
       root.innerHTML=subtitle('先做这个，再做那个','先完成较难的任务，再进行喜欢的活动。可选学校或家庭例子。','🌈','First, then…','First a less preferred task, then a favourite activity. Choose a school or home example.')+
         '<div class="first-presets">'+[['routine','当前流程','Current routine'],['school','学校：写字 → 玩','School: write → play'],['brush','家庭：刷牙 → 点心','Home: brush → snack'],['tidy','家庭：收玩具 → 玩','Home: tidy → play']].map(x=>'<button class="pill '+(data.firstPreset===x[0]?'active':'')+'" data-first-preset="'+x[0]+'">'+bi(x[1],x[2])+'</button>').join('')+'</div>'+
         '<div class="firstthen">'+step(pair[0],'1 · 先做 FIRST')+step(pair[1],'2 · 然后 THEN')+'</div>'+
@@ -609,7 +661,7 @@
           const v=JSON.parse(r.result);
           if(!v||v.v!==2||!v.scenes||!Array.isArray(v.photos)||!Array.isArray(v.stories)||!Array.isArray(v.targetIds))throw Error('格式不匹配 / Invalid backup format');
           if(!confirm('导入备份会替换所有自定义内容。确定继续？\nImporting replaces all current customisations. Continue?'))return;
-          data=Object.assign(defaults(),v);data.circleMode=false;save();closeSettings();render();toast(txt('备份导入成功','Backup imported'));
+          data=Object.assign(defaults(),migrateLegacyOrder(v));data.circleMode=false;save();closeSettings();render();toast(txt('备份导入成功','Backup imported'));
         } catch(e) {toast(txt('导入失败','Import failed')+': '+e.message);}
       };r.readAsText(file);
     }
