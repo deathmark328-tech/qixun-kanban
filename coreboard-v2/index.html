@@ -220,7 +220,7 @@
     <main id="main" aria-live="off"></main>
     <div class="module-pager" id="module-pager" aria-label="功能页面翻页 / Section navigation"></div>
     <div class="audio-status" id="audio-status" role="status" aria-live="polite"></div>
-    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.2<br>Saved on this device · Home and school use</span></footer>
+    <footer class="footer"><span>🌱 一起看、一起说、一起玩。没有答题或过关要求。<br>Look together, talk together, play together. No tests or rewards required.</span><span>本机离线保存 · 家庭自用 · v2.3<br>Saved on this device · Home and school use</span></footer>
   </div>
   <div class="settings" id="settings" role="dialog" aria-modal="true" aria-label="大人设置 / Adult settings">
     <div class="settings-panel">
@@ -410,7 +410,7 @@
       $('module-pager').innerHTML='<button data-module-step="-1" '+(index===0?'disabled':'')+'>'+bi('← 上一功能页','Previous section')+'</button><span>'+bi('第 '+(index+1)+' / '+NAV.length+' 页 · '+NAV[index][2],NAV[index][3]+' · '+(index+1)+' of '+NAV.length)+'</span><button data-module-step="1" '+(index===NAV.length-1?'disabled':'')+'>'+bi('下一功能页 →','Next section')+'</button>';
     }
     function renderNav() {
-      nav.innerHTML=NAV.map(n=>'<button class="nav-tab" data-tab="'+n[0]+'" aria-current="'+(tab===n[0]?'page':'false')+'"><span aria-hidden="true">'+n[1]+'</span>'+bi(n[2],n[3])+'</button>').join('');
+      nav.innerHTML='<a class="nav-tab" style="text-decoration:none;background:#ffebbd;border-color:#e3c678" href="./games/">🎲 '+bi('益智小游戏','Play & Learn')+'</a>'+NAV.map(n=>'<button class="nav-tab" data-tab="'+n[0]+'" aria-current="'+(tab===n[0]?'page':'false')+'"><span aria-hidden="true">'+n[1]+'</span>'+bi(n[2],n[3])+'</button>').join('');
       nav.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
       $('speak-mode').innerHTML=data.speech==='off'?bi('🔇 静音','Muted'):data.speech==='zh'?bi('🔊 中文','Chinese'):bi('🔊 英文','English');
     }

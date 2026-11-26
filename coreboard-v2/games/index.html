@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#264a52"><meta name="apple-mobile-web-app-capable" content="yes"><title>启洵的游戏花园 · Play & Learn</title>
+<style>
+:root{--ink:#203e45;--muted:#597579;--teal:#207279;--bg:#f7f5ef;--line:#d8e5e0}*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--bg);font-family:ui-rounded,"SF Pro Rounded","PingFang SC",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+button,a{font:inherit;-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:focus-visible,a:focus-visible{outline:4px solid #f5aa3d;outline-offset:2px}
+.shell{max-width:1020px;margin:auto;padding:16px 15px 48px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.back{background:#fff;border:1px solid var(--line);border-radius:14px;color:var(--ink);padding:10px 15px;text-decoration:none;display:inline-block;font-weight:800;min-height:54px}
+.bi{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.22;text-align:center}
+.zh{font-weight:900}.en{font-size:clamp(15px,1.8vw,19px);font-weight:700;line-height:1.24}
+.back .en{font-size:14px}.brand{font-size:25px;font-weight:900}.brand small{display:block;font-size:16px;color:var(--muted)}
+.hero{background:#264a52;color:#fff;border-radius:25px;padding:24px;margin:15px 0}.hero h1{font-size:clamp(24px,3vw,34px);margin:0}.hero p{font-size:17px;line-height:1.5;color:#d8efeb}
+.hero .en{color:#c3e9e4;font-size:18px}.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.game-card{background:#fff;border:2px solid var(--line);border-radius:23px;padding:18px;min-height:195px;display:flex;align-items:center;gap:14px;text-align:left;color:var(--ink);box-shadow:0 5px 0 #dbe5df}
+.game-card:nth-child(1){background:#dbf0e3}.game-card:nth-child(2){background:#ffedbf}.game-card:nth-child(3){background:#e9e4fa}.game-card:nth-child(4){background:#e2effd}
+.game-card strong{font-size:25px;display:block}.game-card .en{text-align:left;align-items:flex-start;font-size:19px}.game-card p{font-size:15px;margin:8px 0 0;line-height:1.4}
+.emoji-lg{font-size:70px;min-width:82px;text-align:center}.note,.helper{background:#fff;border:1px solid var(--line);border-radius:17px;padding:16px;margin-top:18px;line-height:1.65;font-size:16px}
+.helper{border-style:dashed;color:#456269}.helper .en{font-size:15px}
+.game-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:15px 0}.game-head h2{font-size:29px;margin:0}
+.round{background:white;border:1px solid var(--line);padding:8px 13px;border-radius:13px;flex-shrink:0;font-weight:900}
+.prompt{background:white;border:2px solid #b6d9ce;border-radius:22px;min-height:98px;padding:15px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:31px;margin:15px 0}
+.prompt .en{font-size:22px}.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:16px 0}
+.big{background:#fff;border:3px solid #d5e5e0;border-radius:24px;min-height:155px;padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--ink)}
+.big:active{transform:scale(.98)}.big .icon{font-size:72px;line-height:1.14}.big .zh{font-size:23px}.big .en{font-size:20px}
+.single{max-width:680px;margin:20px auto}.single .big{width:100%;min-height:235px}
+.control{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0}
+.btn{background:white;color:var(--ink);border:1px solid #c5ded5;border-radius:14px;padding:12px 20px;min-height:60px;font-weight:850}
+.btn.main{background:var(--teal);color:white}.btn .en{font-size:15px}
+.message{background:#e5f5eb;border-radius:18px;padding:14px;text-align:center;min-height:72px;font-size:22px;margin:12px 0}.message .en{font-size:18px;color:#356b63}
+.track{display:flex;align-items:center;justify-content:center;gap:12px;min-height:112px;margin:12px 0}
+.track span{display:grid;place-items:center;background:white;border:3px solid #d3e1db;border-radius:20px;min-width:92px;min-height:100px;font-size:62px}
+.rule-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+.rule-tile{background:white;border:3px solid #d8e8e1;border-radius:23px;min-height:169px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:9px;color:var(--ink)}
+.rule-tile .en{font-size:15px}.shape{display:block;width:75px;height:75px;box-shadow:inset 0 3px 7px #0001}
+.circle{border-radius:50%}.square{border-radius:12px}.triangle{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.red{background:#ef7c74}.blue{background:#6aaeea}.yellow{background:#f4cc50}
+.finish{background:#fff;border:2px solid #d5e6dd;border-radius:25px;text-align:center;padding:35px 20px}.finish .emoji-lg{font-size:90px}.finish p{font-size:18px;line-height:1.5}
+.voice{background:#e4f2ea;border:1px solid #c9ded5;border-radius:12px;min-height:44px;padding:8px 15px}
+.voice .en{font-size:13px}.voice-row{text-align:right}.footer{color:var(--muted);font-size:14px;line-height:1.5;margin-top:24px}
+@media(max-width:690px){.brand{font-size:20px}.game-card{min-height:170px;padding:12px;gap:8px}.emoji-lg{font-size:48px;min-width:55px}.game-card strong{font-size:20px}.game-card .en{font-size:16px}.game-card p{font-size:13px}.games{gap:10px}.big{min-height:140px}.big .icon{font-size:52px}.big .zh{font-size:20px}.big .en{font-size:17px}.rule-buttons{gap:7px}.rule-tile{min-height:135px}.shape{width:52px;height:52px}.track span{min-width:67px;min-height:75px;font-size:48px}}
+@media(max-width:460px){.game-card{flex-direction:column;text-align:center;min-height:225px}.game-card .en{text-align:center;align-items:center}.game-card p{text-align:center}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="shell">
+<header><a class="back" href="../"><span class="bi"><span class="zh">← 返回沟通板</span><span class="en">Back to Coreboard</span></span></a><div class="brand">🌱 启洵的游戏花园<small>Qixun's Play & Learn</small></div></header>
+<div class="voice-row"><button class="voice" id="voice">🔊 英文提示 / English voice</button></div>
+<main id="app" aria-live="polite"></main>
+<footer class="footer">陪孩子一起玩 / Play with a caring adult · 无排名、无倒计时、无扣分 / No rankings, countdown or penalties · 本地游戏，不上传游戏记录 / Local play; no game data uploaded</footer>
+</div><audio id="clip" playsinline preload="none"></audio>
+<script>
+(function(){
+'use strict';
+const app=document.getElementById('app'),player=document.getElementById('clip');
+const list=[
+ ['light','🚦','红绿灯','Go & Stop','练习等待、停止和再开始','Practise waiting, stopping and starting'],
+ ['memory','🚂','记忆小火车','Memory Train','记住两三张熟悉的图卡','Remember two or three pictures'],
+ ['switch','🔷','规则变变变','Rule Switch','一会找颜色，一会找形状','Switch between colours and shapes'],
+ ['feel','💛','心情小侦探','Feelings & Help','表达感觉，再选择需要的帮助','Name a feeling and choose some help']
+];
+const pictures=[['🌋','火山','Volcano'],['🧁','松饼','Muffin'],['🎒','书包','Bag'],['🐱','猫咪','Cat'],['🚗','汽车','Car'],['🍎','苹果','Apple'],['⭐','星星','Star']];
+const feelings=[['😊','开心','Happy'],['😟','难过','Sad'],['😠','生气','Angry'],['😴','累了','Tired']];
+const helpOptions=[['🙋','找大人帮忙','Ask for help'],['🫧','慢慢呼吸','Slow breaths'],['🪑','休息一下','Take a break'],['🗣️','说出想法','Tell someone']];
+const situations=[['喜欢的玩具找到了','You found a favourite toy.'],['和朋友玩的游戏结束了','Playtime with a friend is over.'],['积木倒下了','Your blocks fell down.'],['今天玩得很久了','You have played for a long time.']];
+const clips={go:'../audio/core/3-1.mp3',stop:'../audio/core/5-4.mp3',wait:'../audio/core/6-2.mp3',again:'../audio/core/1-5.mp3',help:'../audio/core/3-3.mp3',happy:'../audio/core/4-8.mp3',sad:'../audio/core/5-8.mp3',play:'../audio/core/4-3.mp3'};
+let game='',round=0,total=4,level=2,sequence=[],step=0,green=false,locked=false,timer=null,showing=false,chosenFeeling=null,voiceOn=true,utterance=null;
+function bi(zh,en){return '<span class="bi"><span class="zh">'+zh+'</span><span class="en" lang="en">'+en+'</span></span>'}
+function action(zh,en,id,main){return '<button class="btn '+(main?'main':'')+'" data-action="'+id+'">'+bi(zh,en)+'</button>'}
+function header(zh,en){return '<div class="game-head"><h2>'+bi(zh,en)+'</h2><div class="round">'+(round+1)+' / '+total+'</div></div>'}
+function clear(){if(timer)clearTimeout(timer);timer=null;player.pause();if('speechSynthesis' in window)speechSynthesis.cancel()}
+function speech(t){if(!voiceOn||!t||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();utterance=new SpeechSynthesisUtterance(t);utterance.lang='en-NZ';utterance.rate=.84;speechSynthesis.speak(utterance)}catch(e){}}
+function sound(key,t){if(!voiceOn)return;let file=clips[key];if(file){player.pause();player.src=file;player.play().catch(function(){speech(t||key)})}else speech(t)}
+function msg(zh,en){const el=document.getElementById('feedback');if(el)el.innerHTML=bi(zh,en)}
+function helper(zh,en){return '<div class="helper"><b>给大人 / For adults:</b> '+zh+'<div class="en" lang="en">'+en+'</div></div>'}
+function home(){clear();game='';app.innerHTML='<div class="hero"><h1>'+bi('🎲 小小冒险，大大进步','Little games, big discoveries')+'</h1><p>每次玩几分钟，想停就停。看一看、指一指、说一说，都可以。</p><p class="en">Play for a few minutes. Pausing, pointing and asking for help are always welcome.</p></div><div class="games">'+list.map(function(g){return '<button class="game-card" data-game="'+g[0]+'"><span class="emoji-lg">'+g[1]+'</span><div><strong>'+g[2]+'</strong><span class="en" lang="en">'+g[3]+'</span><p>'+g[4]+'</p><p>'+g[5]+'</p></div></button>'}).join('')+'</div><div class="note"><b>👨‍👦 一起玩 / Play together:</b> 说一说“等一下 / wait”“轮到我 / my turn”“帮忙 / help”。不要把游戏当作考试。<div lang="en">Model useful words, celebrate effort, and keep play relaxed.</div></div>'}
+function start(k){clear();game=k;round=0;level=2;step=0;locked=false;chosenFeeling=null;if(k==='light')light(false);if(k==='memory')beginMemory();if(k==='switch')drawRule();if(k==='feel')drawFeeling()}
+function finish(){const g=game;clear();app.innerHTML='<div class="finish"><div class="emoji-lg">🌈</div><h2>'+bi('谢谢你一起玩！','Thank you for playing!')+'</h2><p>休息一下、喝口水，或者再玩一次。<br>Take a break, drink some water, or play again.</p><div class="control">'+action('再玩一次','Play again','restart',true)+action('游戏花园','All games','home')+'</div></div>';sound('happy','Lovely playing')}
+function light(isGreen){green=isGreen;locked=false;app.innerHTML=header('红绿灯','Go & Stop')+'<div class="prompt" style="background:'+(green?'#def4d8':'#ffebe3')+'">'+(green?bi('🟢 绿灯，出发！','GREEN — GO!'):bi('🔴 红灯，等一等','RED — WAIT'))+'</div><div class="single"><button class="big" id="light-tap"><span class="icon">'+(green?'🚗':'✋')+'</span>'+bi(green?'点小汽车':'等绿灯再点',green?'Tap the car':'Wait for green')+'</button></div><div id="feedback" class="message">'+bi('慢慢来，我们一起玩','We can take our time')+'</div><div class="control">'+action('返回游戏花园','All games','home')+'</div>'+helper('示范“stop / 停”和“go / 走”。红灯点了也不会扣分。','Model stop and go. Pressing on red simply repeats “wait”.');sound(green?'go':'wait',green?'Go':'Wait');if(!green)timer=setTimeout(function(){if(game==='light')light(true)},2000+round*300)}
+function tapLight(){if(locked)return;if(!green){msg('再等一下就绿灯了','Wait for green');sound('wait','Wait');return}locked=true;round++;msg('出发！下一轮准备','Go! Ready for another turn');sound('go','Go');timer=setTimeout(function(){if(game==='light'){if(round>=total)finish();else light(false)}},900)}
+function beginMemory(){showing=true;locked=true;step=0;const shuffled=pictures.slice().sort(function(){return Math.random()-.5});sequence=shuffled.slice(0,level);app.innerHTML=header('记忆小火车','Memory Train')+'<div class="prompt">'+bi('看看这些图片','Look at these pictures')+'</div><div class="track" id="train"></div><div class="buttons" id="answers"></div><div id="feedback" class="message">'+bi('慢慢看，不着急','Take your time')+'</div><div class="control">'+action('再看一次','Show again','replay')+action('返回游戏花园','All games','home')+'</div>'+helper('先一起指图片，说出名称。忘了随时重新看。','Name the pictures together. Replay freely; no penalty.');showMemory()}
+function showMemory(){clear();showing=true;locked=true;document.getElementById('train').innerHTML=sequence.map(function(x){return '<span>'+x[0]+'</span>'}).join('');document.getElementById('answers').innerHTML='';msg('先看图卡，记住顺序','Look and remember');speech('Look and remember');timer=setTimeout(function(){if(game==='memory')askMemory()},2400+level*650)}
+function askMemory(){showing=false;locked=false;step=0;document.getElementById('train').innerHTML='<span>❔</span>'.repeat(level);const extra=pictures.filter(function(x){return !sequence.some(function(y){return y[0]===x[0]})}).slice(0,4-level);const choices=sequence.concat(extra).sort(function(a,b){return a[2].localeCompare(b[2])});document.getElementById('answers').innerHTML=choices.map(function(x){return '<button class="big" data-memory="'+x[0]+'"><span class="icon">'+x[0]+'</span>'+bi(x[1],x[2])+'</button>'}).join('');msg('哪一张先出现？','Which picture came next?')}
+function tapMemory(key){if(locked||showing)return;if(key!==sequence[step][0]){msg('不着急，可以再看一遍','Take your time. Try looking again');sound('again','Try again');return}document.querySelectorAll('#train span')[step].textContent=key;step++;if(step===sequence.length){locked=true;round++;msg('记住了！','You remembered!');sound('happy','Great');timer=setTimeout(function(){if(game==='memory'){if(round>=total)finish();else{level=round>=2?3:2;beginMemory()}}},1100)}else{msg('接下来是哪张？','What comes next?');speech('Next picture')}}
+const rules=[
+ {kind:'color',target:'red',zh:'找红色',en:'Find RED',options:[['red','circle'],['blue','square'],['yellow','triangle']]},
+ {kind:'shape',target:'circle',zh:'找圆形',en:'Find a CIRCLE',options:[['blue','circle'],['yellow','square'],['red','triangle']]},
+ {kind:'color',target:'blue',zh:'找蓝色',en:'Find BLUE',options:[['yellow','circle'],['blue','triangle'],['red','square']]},
+ {kind:'shape',target:'triangle',zh:'找三角形',en:'Find a TRIANGLE',options:[['red','circle'],['yellow','triangle'],['blue','square']]}
+];
+const col={red:['红','Red'],blue:['蓝','Blue'],yellow:['黄','Yellow']},shape={circle:['圆','Circle'],square:['方','Square'],triangle:['三角','Triangle']};
+function drawRule(){locked=false;const r=rules[round];app.innerHTML=header('规则变变变','Rule Switch')+'<div class="prompt">'+bi((r.kind==='color'?'🎨 ':'🔷 ')+r.zh,r.en)+'</div><div class="rule-buttons">'+r.options.map(function(o,i){return '<button class="rule-tile" data-rule="'+i+'"><span class="shape '+o[0]+' '+o[1]+'"></span>'+bi(col[o[0]][0]+' '+shape[o[1]][0],col[o[0]][1]+' '+shape[o[1]][1])+'</button>'}).join('')+'</div><div class="message" id="feedback">'+bi('这次找颜色，还是形状？','Colour or shape this time?')+'</div><div class="control">'+action('返回游戏花园','All games','home')+'</div>'+helper('规则变化时，先指着提示告诉启洵可以怎么找。','Point out the new rule and model before asking him to choose.');speech(r.en)}
+function tapRule(i){if(locked)return;const r=rules[round],choice=r.options[i];if((r.kind==='color'?choice[0]:choice[1])!==r.target){msg('一起再看一看提示','Let’s check the rule again');sound('again','Try again');return}locked=true;round++;msg('找到了！','You found it!');sound('happy','Good');timer=setTimeout(function(){if(game==='switch'){if(round>=total)finish();else drawRule()}},1100)}
+function drawFeeling(){locked=false;chosenFeeling=null;app.innerHTML=header('心情小侦探','Feelings & Help')+'<div class="prompt">'+bi('💭 '+situations[round][0],situations[round][1])+'</div><div class="note" style="text-align:center">'+bi('可能是什么感觉？没有标准答案','How might someone feel? There is no one right answer.')+'</div><div class="buttons">'+feelings.map(function(f,i){return '<button class="big" data-feeling="'+i+'"><span class="icon">'+f[0]+'</span>'+bi(f[1],f[2])+'</button>'}).join('')+'</div><div class="message" id="feedback">'+bi('什么感觉都能说出来','Every feeling is okay to share')+'</div><div class="control">'+action('返回游戏花园','All games','home')+'</div>'+helper('没有标准答案。孩子可以指、说或做表情。','Accept pointing, speaking or facial expressions.')}
+function tapFeeling(i){if(chosenFeeling!==null)return;chosenFeeling=i;app.innerHTML=header('心情小侦探','Feelings & Help')+'<div class="prompt">'+feelings[i][0]+' '+bi('我可以说：'+feelings[i][1],'I feel '+feelings[i][2].toLowerCase())+'</div><div class="note" style="text-align:center">'+bi('什么会有帮助？','What could help?')+'</div><div class="buttons">'+helpOptions.map(function(x,j){return '<button class="big" data-help="'+j+'"><span class="icon">'+x[0]+'</span>'+bi(x[1],x[2])+'</button>'}).join('')+'</div><div class="message" id="feedback">'+bi('可以告诉爸爸或老师','You can tell an adult')+'</div>'+helper('把孩子选的帮助方式说成短句，例如“我想休息”。','Model “I need a break” or “Please help me”.');sound(i===0?'happy':i===1?'sad':'help',feelings[i][2])}
+function tapHelp(i){if(locked)return;locked=true;round++;msg('谢谢你告诉我你的需要','Thank you for telling me');sound('help',helpOptions[i][2]);timer=setTimeout(function(){if(game==='feel'){if(round>=total)finish();else drawFeeling()}},1200)}
+app.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.game)return start(b.dataset.game);
+ if(b.dataset.action){if(b.dataset.action==='home')home();if(b.dataset.action==='restart')start(game);if(b.dataset.action==='replay'&&game==='memory')showMemory();return}
+ if(b.id==='light-tap')tapLight();
+ if(b.dataset.memory!==undefined)tapMemory(b.dataset.memory);
+ if(b.dataset.rule!==undefined)tapRule(Number(b.dataset.rule));
+ if(b.dataset.feeling!==undefined)tapFeeling(Number(b.dataset.feeling));
+ if(b.dataset.help!==undefined)tapHelp(Number(b.dataset.help));
+});
+document.getElementById('voice').addEventListener('click',function(){voiceOn=!voiceOn;player.pause();if(!voiceOn&&window.speechSynthesis)speechSynthesis.cancel();this.textContent=voiceOn?'🔊 英文提示 / English voice':'🔇 关闭声音 / Sound off'});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))navigator.serviceWorker.register('../sw.js',{scope:'../'}).catch(function(){});
+home();
+})();
+</script></body></html>
